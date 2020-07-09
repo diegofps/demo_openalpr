@@ -1,14 +1,13 @@
-from flask import json, jsonify, app, Flask, request
-from openalpr import Alpr
+from flask import jsonify, Flask, request
+
+import traceback
+import openalpr
 import sys
 
-## Init web server app
 
-app = Flask(__name__)
+## Init OpenALPR
+alpr = openalpr.Alpr("us", "/etc/openalpr/openalpr.conf", "/usr/share/openalpr/runtime_data")
 
-## Init openalpr
-
-alpr = Alpr("us", "/etc/openalpr/openalpr.conf", "/usr/share/openalpr/runtime_data")
 if not alpr.is_loaded():
     print("Error loading OpenALPR")
     sys.exit(1)
@@ -16,21 +15,19 @@ if not alpr.is_loaded():
 alpr.set_top_n(20)
 alpr.set_default_region("md")
 
-## Routes
 
-@app.route('/summary', methods=["GET"])
-def summary():
-    return jsonify(name="Diego", surname="Souza")
+## Init web Server
+app = Flask(__name__)
 
-@app.route('/image', methods=["POST"])
+@app.route('/recognize', methods=["POST"])
 def image():
     try:
         imagefile = request.files.get('imagefile', '')
         data = imagefile.stream.read()
         results = alpr.recognize_array(data)
-        #import pdb; pdb.set_trace()
         return jsonify(result="ok", data=results)
     except Exception as err:
+        traceback.print_exc()
         print(err)
         return jsonify(result="sorry :/")
 
