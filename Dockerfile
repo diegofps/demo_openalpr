@@ -12,4 +12,4 @@ ENV LANG="pt_BR.UTF-8"
 COPY src .
 
 CMD ["flask", "run", "--host=0.0.0.0", "--port=4568", "--without-threads"]
-#CMD ["gunicorn", "-w=`pwd`", "--threads=1", "--bind=0.0.0.0:4568", "app:app"]
+#CMD ["gunicorn", "-w=`nproc`", "--threads=1", "--bind=0.0.0.0:4568", "app:app"]
