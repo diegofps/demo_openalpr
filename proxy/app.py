@@ -17,7 +17,7 @@ import os
 
 
 ### VARIABLES
-DEPLOYMENT_TARGET = os.getenv("DEPLOYMENT_TARGET", "demo_openalpr")
+DEPLOYMENT_NAME = os.getenv("DEPLOYMENT_TARGET", "openalpr")
 CLIENT_CRT = os.getenv("CLIENT_CRT", "./tls/client-admin.crt")
 CLIENT_KEY = os.getenv("CLIENT_KEY", "./tls/client-admin.key")
 SERVER_CRT = os.getenv("SERVER_CRT", "./tls/server-ca.crt")
@@ -114,7 +114,7 @@ def get_node_stats(node):
 
 def detect_nodes_and_pods():
 
-    r = requests.get("https://localhost:6443/api/v1/pods", 
+    r = requests.get("https://localhost:6443/api/v1/pods?labelSelector='app=" + DEPLOYMENT_NAME + "'", 
             cert=(CLIENT_CRT, CLIENT_KEY), 
             verify=SERVER_CRT)
     
