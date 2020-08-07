@@ -48,7 +48,9 @@ class Node:
 
     def __init__(self, ip):
         self.name = "Unknown"
+        self.arch = "Unknown"
         self.score_sum = 0.0
+        self.score_raw = 0.0
         self.score = 0.0
         self.pods = []
         self.idle = 0.0
@@ -82,7 +84,7 @@ def pick_node_and_pod():
         
         node = nodes_list[cur]
     
-    debug("Chose node", cur, "and pod", node.pod)
+    #debug("Chose node", cur, "and pod", node.pod)
     pod = node.pods[node.pod]
     node.pod += 1
     
@@ -93,15 +95,17 @@ def pick_node_and_pod():
 
 
 def get_node_stats(node):
-    debug("Starting get_node_stats")
+    #debug("Starting get_node_stats")
 
     name = "Unknown"
+    arch = "Unknown"
     idle = 0.0
     busy = 1.0
+    cpus = 1
     
     addr = node.ip if SSH_USER == '' else SSH_USER + '@' + node.ip
     cmd = "ssh -o \"StrictHostKeyChecking no\" -i {} {} 'mpstat 1 1 -o JSON'".format(SSH_PRIVATE_KEY, addr)
-    debug("SSH CMD:", cmd)
+    #debug("SSH CMD:", cmd)
     cmd = shlex.split(cmd)
     
     with Popen(cmd, stdout=PIPE) as proc:
@@ -112,31 +116,45 @@ def get_node_stats(node):
             stdout, err = proc.communicate()
     
     
-    #cp = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    #try:
-    #    cp.wait(timeout=3)
-    #except TimeoutExpired:
-    #    pass
-    #stdout = cp.stdout.read()
-    
-    
-    debug("SSH RESPONSE:", stdout)
+    #debug("SSH RESPONSE:", stdout)
     
     if b'not found' in stdout:
-        debug(node.ip + "| COMMAND NOT FOUND:", stdout)
-        return name, idle, busy
+        #debug("COMMAND NOT FOUND:", stdout, author=node.ip)
+        return name, idle, busy, arch, cpus
     
     try:
         data = json.loads(stdout)
-        idle = data["sysstat"]["hosts"][0]["statistics"][0]['cpu-load'][0]['idle'] / 100.
-        name = data["sysstat"]["hosts"][0]["nodename"]
+        host = data["sysstat"]["hosts"][0]
+        
+        idle = host["statistics"][0]['cpu-load'][0]['idle'] / 100.
+        name = host["nodename"]
+        arch = host["machine"]
+        cpus = host["number-of-cpus"]
         busy = 1.0 - idle
-        debug(node.ip + "| SSH RESPONSE IS GOOD")
+        #debug(node.ip + "| SSH RESPONSE IS GOOD")
     except:
-        debug(node.ip + "| CORRUPTED JSON IN RESPONSE")
+        debug("CORRUPTED JSON IN RESPONSE: " + stdout, author=node.ip)
         traceback.print_exc(file=sys.stdout)
     
-    return name, idle, busy
+    return name, idle, busy, arch, cpus
+
+def isReady(item):
+    if not "status" in item:
+        return False
+    
+    if not "containerStatuses" in item["status"]:
+        return False
+    
+    if not "podIP" in item["status"]:
+        return False
+    
+    if not "hostIP" in item["status"]:
+        return False
+    
+    if any(x["ready"] == False for x in item["status"]["containerStatuses"]):
+        return False
+    
+    return True
 
 def detect_nodes_and_pods():
 
@@ -147,24 +165,6 @@ def detect_nodes_and_pods():
     data = r.json()
     #debug("APISERVER RESPONSE:", data)
     nodes = {}
-    
-    def isReady(item):
-        if not "status" in item:
-            return False
-        
-        if not "containerStatuses" in item["status"]:
-            return False
-        
-        if not "podIP" in item["status"]:
-            return False
-        
-        if not "hostIP" in item["status"]:
-            return False
-        
-        if any(x["ready"] == False for x in item["status"]["containerStatuses"]):
-            return False
-        
-        return True
     
     for item in data["items"]:
     
@@ -183,34 +183,40 @@ def detect_nodes_and_pods():
     return list(nodes.values())
 
 def refresh_nodes_stats(nodes_list):
-    debug("REFRESHING NODES")
+    #debug("REFRESHING NODES")
     nodes_stats = p.map(get_node_stats, nodes_list)
     #nodes_stats = [get_node_stats(x) for x in nodes_list]
-    debug("NODES REFRESHED", nodes_stats)
+    #debug("NODES REFRESHED", nodes_stats)
     
     for node, stats in zip(nodes_list, nodes_stats):
         node.name = stats[0]
         node.idle = stats[1]
         node.busy = stats[2]
+        node.arch = stats[3]
+        node.cpus = stats[4]
     
     score_sum = 0.0
     
     for node in nodes_list:
-        score_sum += node.idle
+        node.score_raw = 1.0 if node.idle >= 0.9 else node.idle / 0.9
+        node.score_raw *= node.cpus
+        score_sum += node.score_raw
         node.score_sum = score_sum
     
-    debug("Score sum was", score_sum)
+    #debug("Score sum was", score_sum)
     
     if score_sum == 0.0:
         score_sum = 1.0
+    else:
+        debug("score_sum seems fine:", score_sum)
     
     for node in nodes_list:
         node.score_sum /= score_sum
-        node.score = node.idle / score_sum
+        node.score = node.score_raw / score_sum
         #debug(node.score_sum, node.score, node.idle)
-    
 
-### UPDATE 'CRON'
+
+### 'cron' like process
 def sync_clock():
 
     while True:
@@ -238,21 +244,43 @@ sync_clock_process = Process(target=sync_clock)
 sync_clock_process.start()
 p = Pool(NUM_THREADS)
 
+
+### WEB SERVER
+
+@app.route('/status', methods=["GET"])
+def status():
+    debug("Starting /status")
+    global global_nodes
+    response = []
+    
+    for node in global_nodes:
+        response.append({
+            "name": node.name,
+            "ip": node.ip,
+            "num_pods": len(node.pods),
+            "pod_id": node.pod,
+            "score": node.score,
+            "busy": node.busy
+        })
+    
+    return jsonify(response)
+
+
 ### WEB SERVER
 @app.route('/sync', methods=["GET"])
 def sync():
-    debug("Starting /Sync")
+    #debug("Starting /Sync")
     start_time = time.monotonic()
     
     nodes_list = detect_nodes_and_pods()
     debug("SYNC: Found", len(nodes_list), "nodes")
     
     refresh_nodes_stats(nodes_list)
-    debug("Stats refreshed")
+    #debug("Stats refreshed")
     
     global global_nodes
     global_nodes = nodes_list
-    debug("Global nodes list refreshed")
+    #debug("Global nodes list refreshed")
     
     ellapsed_time = time.monotonic() - start_time
     
@@ -261,7 +289,7 @@ def sync():
         unpicklable=False
     )
     
-    debug("Body prepared")
+    #debug("Body prepared")
     
     return app.response_class(
         response=body,
