@@ -1,1 +1,4 @@
 **/*.pyc
+*.crt
+*.key
+**/id_rsa*
