@@ -85,6 +85,7 @@ def sync(p):
     url = params.SELF_SERVER + "/proxy_data"
     r = requests.post(url, data=data, headers=headers)
     
+    debug("Sync completed, found", len(nodes), "nodes")
     # debug(r.json())
 
 

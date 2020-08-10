@@ -1,33 +1,4 @@
-def read_data(data, path, default_value=None):
-    current = data
-
-    for key in path:
-        if not key in current:
-            print("missing key", key, "in path", path)
-            return default_value
-        else:
-            current = current[key]
-    
-    return current
-    
-
-def is_pod_ready(item):
-    if not "status" in item:
-        return False
-    
-    if not "containerStatuses" in item["status"]:
-        return False
-    
-    if not "podIP" in item["status"]:
-        return False
-    
-    if not "hostIP" in item["status"]:
-        return False
-    
-    if any(x["ready"] == False for x in item["status"]["containerStatuses"]):
-        return False
-    
-    return True
+from utils import read_data
 
 
 class Node:
@@ -38,7 +9,6 @@ class Node:
         self.cpus   = int(read_data(data, ["status", "capacity", "cpu"], 1))
         self.name   = read_data(data, ["metadata", "name"], "Unknown")
         self.weight = float(read_data(data, ["metadata", "labels", "weight"], self.cpus))
-        # self.data   = data
         
         self.score_sum = 0.0
         self.score_raw = 0.0
@@ -58,10 +28,31 @@ class Node:
 class Pod:
 
     def __init__(self, data):
+        self.isReady = self.check_ready(data)
+
+        if not self.isReady:
+            return
+        
         self.app       = read_data(data, ["metadata", "labels", "app"], "Unknown")
         self.namespace = read_data(data, ["metadata", "namespace"], "Unknown")
         self.hostIP    = read_data(data, ["status", "hostIP"], "Unknown")
         self.name      = read_data(data, ["metadata", "name"], "Unknown")
         self.ip        = read_data(data, ["status", "podIP"], "Unknown")
-        self.isReady   = is_pod_ready(data)
-        # self.data      = data
+
+    def check_ready(self, item):
+        if not "status" in item:
+            return False
+        
+        if not "containerStatuses" in item["status"]:
+            return False
+        
+        if not "podIP" in item["status"]:
+            return False
+        
+        if not "hostIP" in item["status"]:
+            return False
+        
+        if any(x["ready"] == False for x in item["status"]["containerStatuses"]):
+            return False
+        
+        return True
