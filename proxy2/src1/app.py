@@ -22,10 +22,10 @@ CLIENT_KEY      = os.getenv("CLIENT_KEY", "./tls/client-admin.key")
 SERVER_CRT      = os.getenv("SERVER_CRT", "./tls/server-ca.crt")
 SSH_USER        = os.getenv("SSH_USER", "ngd")
 SSH_PRIVATE_KEY = os.getenv("SSH_PRIVATE_KEY", "~/.ssh/id_rsa")
-NUM_THREADS     = int(os.getenv("NUM_THREADS", "16"))
-REFRESH_SECONDS = int(os.getenv("REFRESH_SECONDS", "1"))
 API_SERVER      = os.getenv("API_SERVER", "https://192.168.1.134:6443")
 SELF_SERVER     = os.getenv("SELF_SERVER", "http://localhost:4570")
+NUM_THREADS     = int(os.getenv("NUM_THREADS", "16"))
+REFRESH_SECONDS = int(os.getenv("REFRESH_SECONDS", "1"))
 
 app = Flask(__name__)
 nodes = []
