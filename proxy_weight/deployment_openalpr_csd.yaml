@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openalpr-csd
+  labels:
+    app: openalpr
+spec:
+  replicas: 100
+  selector:
+    matchLabels:
+      app: openalpr
+  template:
+    metadata:
+      labels:
+        app: openalpr
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
+      containers:
+      - name: demo-openalpr
+        image: 10.1.1.1:27443/demo_openalpr
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4568
