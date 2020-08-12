@@ -49,6 +49,7 @@ def pick_node_and_pod():
 
 @app.route('/proxy_data', methods=["POST"])
 def post_route():
+    debug("Updating list of nodes from client input")
     data = jsonpickle.decode(request.data)
     # debug("RECEIVED FROM CLIENT", data)
     

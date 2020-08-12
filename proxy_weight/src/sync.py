@@ -174,17 +174,17 @@ class SyncAdaptiveWeightOnBusy(BaseSync):
         pass
 
 
-if params.sync == "WEIGHT":
+if params.SYNC == "WEIGHT":
     sync_process = SyncWeight()
 
-elif params.sync == "WEIGHT_ON_BUSY":
+elif params.SYNC == "WEIGHT_ON_BUSY":
     sync_process = SyncWeightOnBusy()
 
-elif params.sync == "ADAPTIVE_WEIGHT_ON_BUSY":
+elif params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
     sync_process = SyncAdaptiveWeightOnBusy()
 
 else:
-    debug("Unknown sync method (", params.sync, "), using default method: WEIGHT")
+    debug("Unknown sync method (", params.SYNC, "), using default method: WEIGHT")
     sync_process = SyncWeight()
 
 
