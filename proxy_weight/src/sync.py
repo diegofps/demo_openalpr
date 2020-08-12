@@ -36,8 +36,10 @@ def detect_nodes_and_pods():
     return [x for x in nodes if x.pods]
 
 
-def refresh_cpu_stats(nodes):
-    nodes = [x for x in nodes if x.primary]
+def refresh_cpu_stats(p, nodes, onlyPrimary=False):
+    if onlyPrimary:
+        nodes = [x for x in nodes if x.primary]
+    
     for node in nodes:
         _, idle, busy, _, _ = clustertools.get_stats(node.ip)
         node.idle = idle
@@ -51,8 +53,6 @@ def refresh_scores(nodes_list):
         score_sum += node.score_raw
         node.score_sum = score_sum
     
-    # debug("Score sum was", score_sum)
-    
     if score_sum == 0.0:
         debug("Zeroed score_sum, changing to 1.0")
         score_sum = 1.0
@@ -60,57 +60,136 @@ def refresh_scores(nodes_list):
     for node in nodes_list:
         node.score_sum /= score_sum
         node.score = node.score_raw / score_sum
-        # debug(node.score_sum, node.score, node.idle)
 
 
-def sync(p):
-    nodes = detect_nodes_and_pods()
-    # print("FOUND", len(nodes), "NODES")
 
-    # Refresh score_raw using cpu data
-    # refresh_cpu_stats(nodes)
-    # for node in nodes:
-    #     node.score_raw = 1.0 if node.idle >= 0.9 else node.idle / 0.9
-    #     node.score_raw *= node.cpus
+class BaseSync(Process):
+
+    def __init__(self):
+        super().__init__()
+        self.p = Pool(params.NUM_THREADS)
     
-    # Refresh score_raw using weight
-    for node in nodes:
-        node.score_raw = node.weight
+    def run(self):
+        while True:
+            try:
+                time.sleep(params.REFRESH_SECONDS)
+                debug("Starting sync")
+                self.sync(self.p)
+                debug("Sync ended")
+                
+            except KeyboardInterrupt:
+                self.p.terminate()
+                self.p.join()
+                self.p.close()
+                break
+            
+            except:
+                debug("Sync has failed")
+                traceback.print_exc(file=sys.stdout)
+
+
+class SyncWeight(BaseSync):
     
-    refresh_scores(nodes)
-
-    data = jsonpickle.encode(nodes)
-    # print("SENDING DATA TO SERVER/PROXY_DATA", data)
-
-    headers = {'content-type': 'application/json'}
-    url = params.SELF_SERVER + "/proxy_data"
-    r = requests.post(url, data=data, headers=headers)
+    def __init__(self):
+        super().__init__()
     
-    debug("Sync completed, found", len(nodes), "nodes")
-    # debug(r.json())
+    def sync(self, p):
+        nodes = detect_nodes_and_pods(p)
+
+        # Refresh score_raw using weight
+        for node in nodes:
+            node.score_raw = node.weight
+        
+        refresh_scores(nodes)
+
+        # Send nodes and weights for server
+        data = jsonpickle.encode(nodes)
+
+        headers = {'content-type': 'application/json'}
+        url = params.SELF_SERVER + "/proxy_data"
+        r = requests.post(url, data=data, headers=headers)
+
+        debug("SyncWeight completed, found", len(nodes), "nodes")
 
 
-def sync_loop():
-    p = Pool(params.NUM_THREADS)
-    
-    while True:
-        try:
-            time.sleep(params.REFRESH_SECONDS)
-            debug("Running sync")
-            sync(p)
-        except KeyboardInterrupt:
-            p.terminate()
-            p.join()
-            p.close()
-            break
-        except:
-            debug("Sync has failed")
-            traceback.print_exc(file=sys.stdout)
+class SyncWeightOnBusy(BaseSync):
+
+    def __init__(self):
+        super().__init__()
+
+    def sync(self, p):
+        nodes = detect_nodes_and_pods()
+        refresh_cpu_stats(p, nodes, onlyPrimary=True)
+        
+        # Calculate average cpu usage in primary nodes
+        sumCpu = 0.0
+        numCpu = 0
+        
+        for n in nodes:
+            if n.primary:
+                sumCpu += n.busy
+                numCpu += 1
+        
+        if numCpu == 0:
+            debug("Warning: No primary node detected")
+            avgCpu = 1.0
+            
+        else:
+            avgCpu = sumCpu / numCpu
+        
+        # Update the scores
+        if avgCpu >= params.MIN_CPU_FOR_WEIGHT:
+            print("CPU usage is high, using CSDs (", avgCpu, ")")
+            
+            for node in nodes:
+                node.score_raw = node.weight
+            
+        else:
+            print("CPU usage is low, using host only (", avgCpu, ")")
+            
+            for node in nodes:
+                if node.primary:
+                    node.score_raw = node.weight
+                else:
+                    node.score_raw = 0.0
+        
+        refresh_scores(nodes)
+
+        # Send the nodes and their weights to our remote server
+        data = jsonpickle.encode(nodes)
+
+        headers = {'content-type': 'application/json'}
+        url = params.SELF_SERVER + "/proxy_data"
+        r = requests.post(url, data=data, headers=headers)
+
+        debug("SyncWeight completed, found", len(nodes), "nodes")
 
 
-sync_clock_process = Process(target=sync_loop)
+class SyncAdaptiveWeightOnBusy(BaseSync):
+
+    def __init__(self):
+        super().__init__()
+
+    def sync(self, p):
+        pass
+
+
+if params.sync == "WEIGHT":
+    sync_process = SyncWeight()
+
+elif params.sync == "WEIGHT_ON_BUSY":
+    sync_process = SyncWeightOnBusy()
+
+elif params.sync == "ADAPTIVE_WEIGHT_ON_BUSY":
+    sync_process = SyncAdaptiveWeightOnBusy()
+
+else:
+    debug("Unknown sync method (", params.sync, "), using default method: WEIGHT")
+    sync_process = SyncWeight()
 
 
 def start():
-    if not sync_clock_process.is_alive():
-        sync_clock_process.start()
+    if not sync_process.is_alive():
+        sync_process.start()
+
+

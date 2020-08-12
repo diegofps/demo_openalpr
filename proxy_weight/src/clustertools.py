@@ -43,7 +43,7 @@ def get_stats(node_ip):
         arch = host["machine"]
         cpus = host["number-of-cpus"]
         busy = 1.0 - idle
-        debug("success")
+        # debug("success")
     except:
         debug("CORRUPTED JSON IN RESPONSE: " + stdout, author=node_ip)
         traceback.print_exc(file=sys.stdout)
