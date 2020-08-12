@@ -20,6 +20,18 @@ spec:
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: IfNotPresent
         env:
+        - name: APP_NAME
+          value: "openalpr"
+        - name: SSH_USER
+          value: "ngd"
+        - name: NUM_THREADS
+          value: "16"
+        - name: REFRESH_SECONDS
+          value: "5"
+        - name: API_SERVER
+          value: "https://10.1.1.1:6443"
+        - name: SELF_SERVER
+          value: "http://localhost:4570"
         - name: SYNC
           value: WEIGHT_ON_BUSY
         - name: MIN_CPU_FOR_WEIGHT

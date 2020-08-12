@@ -1,4 +1,4 @@
-from params import API_SERVER, CLIENT_CRT, CLIENT_KEY, SERVER_CRT, DEPLOYMENT_NAME
+from params import API_SERVER, CLIENT_CRT, CLIENT_KEY, SERVER_CRT, APP_NAME
 from models import Node
 
 import requests
@@ -13,7 +13,7 @@ def get_nodes():
 
 
 def get_pods():
-    r = requests.get(API_SERVER + "/api/v1/pods?labelSelector=app=" + DEPLOYMENT_NAME, 
+    r = requests.get(API_SERVER + "/api/v1/pods?labelSelector=app=" + APP_NAME, 
             cert=(CLIENT_CRT, CLIENT_KEY), 
             verify=SERVER_CRT)
     

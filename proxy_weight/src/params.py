@@ -1,6 +1,6 @@
 import os
 
-DEPLOYMENT_NAME    = os.getenv("DEPLOYMENT_NAME", "openalpr")
+APP_NAME           = os.getenv("APP_NAME", "openalpr")
 CLIENT_CRT         = os.getenv("CLIENT_CRT", "../keys/client-admin.crt")
 CLIENT_KEY         = os.getenv("CLIENT_KEY", "../keys/client-admin.key")
 SERVER_CRT         = os.getenv("SERVER_CRT", "../keys/server-ca.crt")

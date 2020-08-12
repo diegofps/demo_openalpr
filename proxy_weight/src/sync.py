@@ -1,4 +1,4 @@
-from multiprocessing import Process, Pool
+from multiprocessing import Process
 from models import Node, Pod
 from utils import debug
 
@@ -67,20 +67,26 @@ class BaseSync(Process):
 
     def __init__(self):
         super().__init__()
-        self.p = Pool(params.NUM_THREADS)
+        #self.p = Pool(params.NUM_THREADS)
+        self.p = None
     
     def run(self):
+        sleep_before = min(2, params.REFRESH_SECONDS)
+        sleep_after  = params.REFRESH_SECONDS - sleep_before
+        
         while True:
             try:
-                time.sleep(params.REFRESH_SECONDS)
+                time.sleep(sleep_before)
                 debug("Starting sync")
-                self.sync(self.p)
+                self.sync()
                 debug("Sync ended")
+                time.sleep(sleep_after)
                 
             except KeyboardInterrupt:
-                self.p.terminate()
-                self.p.join()
-                self.p.close()
+                debug("Bye")
+                #self.p.terminate()
+                #self.p.join()
+                #self.p.close()
                 break
             
             except:
@@ -93,8 +99,8 @@ class SyncWeight(BaseSync):
     def __init__(self):
         super().__init__()
     
-    def sync(self, p):
-        nodes = detect_nodes_and_pods(p)
+    def sync(self):
+        nodes = detect_nodes_and_pods()
 
         # Refresh score_raw using weight
         for node in nodes:
@@ -117,9 +123,9 @@ class SyncWeightOnBusy(BaseSync):
     def __init__(self):
         super().__init__()
 
-    def sync(self, p):
+    def sync(self):
         nodes = detect_nodes_and_pods()
-        refresh_cpu_stats(p, nodes, onlyPrimary=True)
+        refresh_cpu_stats(None, nodes, onlyPrimary=True)
         
         # Calculate average cpu usage in primary nodes
         sumCpu = 0.0
@@ -170,7 +176,7 @@ class SyncAdaptiveWeightOnBusy(BaseSync):
     def __init__(self):
         super().__init__()
 
-    def sync(self, p):
+    def sync(self):
         pass
 
 
