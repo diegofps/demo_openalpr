@@ -14,10 +14,10 @@ spec:
       labels:
         app: openalpr-proxy-weight
     spec:
-      nodeName: host.local
+      nodeName: perl
       containers:
-      - name: openalpt-proxy-weight
-        image: 192.168.1.134:27443/openalpr-proxy-weight:v1
+      - name: openalpr-proxy-weight
+        image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 4570
