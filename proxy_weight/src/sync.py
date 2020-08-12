@@ -37,6 +37,7 @@ def detect_nodes_and_pods():
 
 
 def refresh_cpu_stats(nodes):
+    nodes = [x for x in nodes if x.primary]
     for node in nodes:
         _, idle, busy, _, _ = clustertools.get_stats(node.ip)
         node.idle = idle

@@ -1,14 +1,15 @@
-from utils import read_data
+from utils import read_data, read_bool
 
 
 class Node:
 
     def __init__(self, data):
-        self.arch   = read_data(data, ["metadata", "labels", "kubernetes.io/arch"], "Unknown")
-        self.ip     = read_data(data, ["metadata", "labels", "k3s.io/internal-ip"])
-        self.cpus   = int(read_data(data, ["status", "capacity", "cpu"], 1))
-        self.name   = read_data(data, ["metadata", "name"], "Unknown")
-        self.weight = float(read_data(data, ["metadata", "labels", "weight"], self.cpus))
+        self.arch    = read_data(data, ["metadata", "labels", "kubernetes.io/arch"], "Unknown")
+        self.ip      = read_data(data, ["metadata", "labels", "k3s.io/internal-ip"])
+        self.cpus    = int(read_data(data, ["status", "capacity", "cpu"], 1))
+        self.name    = read_data(data, ["metadata", "name"], "Unknown")
+        self.weight  = float(read_data(data, ["metadata", "labels", "weight"], self.cpus, warnOnMiss=False))
+        self.primary = read_bool(read_data(data, ["metadata", "labels", "primary"], None, warnOnMiss=False))
         
         self.score_sum = 0.0
         self.score_raw = 0.0
