@@ -10,6 +10,6 @@ API_SERVER         = os.getenv("API_SERVER", "https://192.168.1.134:6443")
 SELF_SERVER        = os.getenv("SELF_SERVER", "http://localhost:4570")
 SYNC               = os.getenv("SYNC", "WEIGHT")
 NUM_THREADS        = int(os.getenv("NUM_THREADS", "16"))
-REFRESH_SECONDS    = int(os.getenv("REFRESH_SECONDS", "5"))
+REFRESH_SECONDS    = int(os.getenv("REFRESH_SECONDS", "3"))
 MIN_CPU_FOR_WEIGHT = float(os.getenv("MIN_CPU_FOR_WEIGHT", "0.9"))
 

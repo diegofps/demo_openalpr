@@ -14,8 +14,14 @@ EXCLUDED_HEADERS = ['content-encoding', 'content-length', 'transfer-encoding', '
 
 
 app = Flask(__name__)
-sync.start()
 nodes = []
+
+
+def node_listener(new_nodes):
+    global nodes
+    nodes = new_nodes
+
+sync.start(node_listener)
 
 
 def pick_node_and_pod():
@@ -46,7 +52,7 @@ def pick_node_and_pod():
     print("Chose node", node.name, node.ip, "and pod", pod.name, pod.ip)
     return node, pod
 
-
+'''
 @app.route('/proxy_data', methods=["POST"])
 def post_route():
     debug("Updating list of nodes from client input")
@@ -63,7 +69,7 @@ def post_route():
         status=200,
         mimetype='application/json'
     )
-
+'''
 
 @app.route('/proxy_data', methods=["GET"])
 def get_route():

@@ -1,4 +1,5 @@
 from multiprocessing import Process
+from threading import Thread
 from models import Node, Pod
 from utils import debug
 
@@ -64,12 +65,16 @@ def refresh_scores(nodes_list):
 
 
 
-class BaseSync(Process):
+class BaseSync(Thread):
 
     def __init__(self):
         super().__init__()
         #self.p = Pool(params.NUM_THREADS)
+        self.listener = None
         self.p = None
+    
+    def set_listener(self, listener):
+        self.listener = listener
     
     def run(self):
         sleep_before = int(random.random() * params.REFRESH_SECONDS)
@@ -85,6 +90,7 @@ class BaseSync(Process):
                 
             except KeyboardInterrupt:
                 debug("Bye")
+                sys.exit(0)
                 #self.p.terminate()
                 #self.p.join()
                 #self.p.close()
@@ -109,12 +115,14 @@ class SyncWeight(BaseSync):
         
         refresh_scores(nodes)
 
-        # Send nodes and weights for server
-        data = jsonpickle.encode(nodes)
+        self.listener(nodes)
 
-        headers = {'content-type': 'application/json'}
-        url = params.SELF_SERVER + "/proxy_data"
-        r = requests.post(url, data=data, headers=headers)
+        # Send nodes and weights for server
+        #data = jsonpickle.encode(nodes)
+        
+        #headers = {'content-type': 'application/json'}
+        #url = params.SELF_SERVER + "/proxy_data"
+        #r = requests.post(url, data=data, headers=headers)
 
         debug("SyncWeight completed, found", len(nodes), "nodes")
 
@@ -195,7 +203,8 @@ else:
     sync_process = SyncWeight()
 
 
-def start():
+def start(listener):
+    sync_process.set_listener(listener)
     if not sync_process.is_alive():
         sync_process.start()
 
