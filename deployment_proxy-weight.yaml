@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openalpr-proxy-weight
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: openalpr-proxy-weight
