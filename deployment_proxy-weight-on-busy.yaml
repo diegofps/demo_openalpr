@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-weight
+  name: openalpr-proxy-weight-on-busy
   labels:
-    app: openalpr-proxy-weight
+    app: openalpr-proxy-weight-on-busy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: openalpr-proxy-weight
+      app: openalpr-proxy-weight-on-busy
   template:
     metadata:
       labels:
-        app: openalpr-proxy-weight
+        app: openalpr-proxy-weight-on-busy
     spec:
       nodeName: perl
       containers:
-      - name: openalpr-proxy-weight
+      - name: openalpr-proxy-weight-on-busy
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: IfNotPresent
         env:
