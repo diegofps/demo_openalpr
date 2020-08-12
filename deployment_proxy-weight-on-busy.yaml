@@ -18,6 +18,12 @@ spec:
       containers:
       - name: openalpr-proxy-weight
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SYNC
+          value: WEIGHT_ON_BUSY
+        - name: MIN_CPU_FOR_WEIGHT
+          value: 0.9
         ports:
         - containerPort: 4570
+

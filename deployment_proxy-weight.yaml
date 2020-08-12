@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openalpr-proxy-weight
+  labels:
+    app: openalpr-proxy-weight
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: openalpr-proxy-weight
+  template:
+    metadata:
+      labels:
+        app: openalpr-proxy-weight
+    spec:
+      nodeName: perl
+      containers:
+      - name: openalpr-proxy-weight
+        image: 10.1.1.1:27443/openalpr-proxy-weight:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4570
