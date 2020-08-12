@@ -72,7 +72,7 @@ class BaseSync(Process):
         self.p = None
     
     def run(self):
-        sleep_before = int(random.random * params.REFRESH_SECONDS)
+        sleep_before = int(random.random() * params.REFRESH_SECONDS)
         sleep_after  = params.REFRESH_SECONDS - sleep_before
         
         while True:
