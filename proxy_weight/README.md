@@ -58,7 +58,8 @@ sudo kubectl label node perl weight=320 --overwrite
 ## Deploy the proxy in the cluster using the deploy script
 
 ```bash
-sudo kubectl apply -f deployment_openalpr-proxy-weight.yaml
+sudo kubectl apply -f deployment_proxy-weight.yaml
+sudo kubectl apply -f deployment_proxy-weight-on-busy.yaml
 ```
 
 ## Deploy Pods with openalpr app

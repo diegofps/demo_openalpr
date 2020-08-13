@@ -155,10 +155,10 @@ class SyncWeightOnBusy(BaseSync):
         # Update the scores
         if avgCpu >= params.MIN_CPU_FOR_WEIGHT:
             print("CPU usage is high, using CSDs (", avgCpu, ")")
-            
+
             for node in nodes:
                 node.score_raw = node.weight
-            
+
         else:
             print("CPU usage is low, using host only (", avgCpu, ")")
             
@@ -170,12 +170,14 @@ class SyncWeightOnBusy(BaseSync):
         
         refresh_scores(nodes)
 
-        # Send the nodes and their weights to our remote server
-        data = jsonpickle.encode(nodes)
+        self.listener(nodes)
 
-        headers = {'content-type': 'application/json'}
-        url = params.SELF_SERVER + "/proxy_data"
-        r = requests.post(url, data=data, headers=headers)
+        # Send the nodes and their weights to our remote server
+        #data = jsonpickle.encode(nodes)
+
+        #headers = {'content-type': 'application/json'}
+        #url = params.SELF_SERVER + "/proxy_data"
+        #r = requests.post(url, data=data, headers=headers)
 
         debug("SyncWeight completed, found", len(nodes), "nodes")
 
