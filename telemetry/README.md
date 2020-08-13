@@ -9,6 +9,6 @@ docker push $HOST_IP:27443/telemetry:v1
 # Deploy it on every primary machine
 
 ```bash
-docker run --name telemetry -p 4580:4580 $HOST_IP:27443/telemetry:v1
+docker run --name telemetry -p 4580:4580 -e HOST_HOSTNAME=`hostname` telemetry:v1
 ```
 

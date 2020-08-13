@@ -10,6 +10,10 @@ import shlex
 import json
 import time
 import sys
+import os
+
+
+HOST_HOSTNAME = os.getenv("HOST_HOSTNAME", "Unknown")
 
 
 def get_telemetry():
@@ -39,7 +43,7 @@ def get_telemetry():
         host = data["sysstat"]["hosts"][0]
         
         idle = host["statistics"][0]['cpu-load'][0]['idle'] / 100.
-        name = host["nodename"]
+        name = HOST_HOSTNAME
         arch = host["machine"]
         cpus = host["number-of-cpus"]
         busy = 1.0 - idle
