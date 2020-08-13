@@ -13,7 +13,8 @@ import sys
 import os
 
 
-HOST_HOSTNAME = os.getenv("HOST_HOSTNAME", "Unknown")
+REFRESH_SECONDS = int(os.getenv("REFRESH_SECONDS", "5"))
+HOST_HOSTNAME   = os.getenv("HOST_HOSTNAME", "Unknown")
 
 
 def get_telemetry():
@@ -75,8 +76,8 @@ class Sync(Thread):
         body = jsonpickle.encode(data, unpicklable=False)
 
     def run(self):
-        sleep_before = 1
-        sleep_after = 5 - sleep_before
+        sleep_before = int(random.random() * REFRESH_SECONDS)
+        sleep_after = REFRESH_SECONDS - sleep_before
         
         while True:
             try:

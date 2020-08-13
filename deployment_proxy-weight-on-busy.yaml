@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openalpr-proxy-weight-on-busy
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: openalpr-proxy-weight-on-busy

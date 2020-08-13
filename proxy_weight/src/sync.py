@@ -154,13 +154,13 @@ class SyncWeightOnBusy(BaseSync):
         
         # Update the scores
         if avgCpu >= params.MIN_CPU_FOR_WEIGHT:
-            print("CPU usage is high, using CSDs (", avgCpu, ")")
+            print("CPU usage is high, enabling CSDs (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
 
             for node in nodes:
                 node.score_raw = node.weight
 
         else:
-            print("CPU usage is low, using host only (", avgCpu, ")")
+            print("CPU usage is low, using only primary nodes (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
             
             for node in nodes:
                 if node.primary:
