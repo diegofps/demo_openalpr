@@ -45,7 +45,7 @@ def get_stats(node_ip):
         busy = 1.0 - idle
         # debug("success")
     except:
-        debug("CORRUPTED JSON IN RESPONSE: " + stdout, author=node_ip)
+        debug(b"CORRUPTED JSON IN RESPONSE: " + stdout, author=node_ip)
         traceback.print_exc(file=sys.stdout)
     
     return name, idle, busy, arch, cpus
