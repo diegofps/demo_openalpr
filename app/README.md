@@ -1,7 +1,5 @@
-# Build the container
+# Build the container (for multiple architectures)
 
 ```bash
-docker build . -t demo_openalpr:v1
-docker tag demo_openalpr:v1 $HOST_IP:27443/demo_openalpr:v1
-docker push $HOST_IP:27443/demo_openalpr:v1
+docker buildx build --platform linux/amd64,linux/arm64 --push=true -t $HOST_IP:27443/demo_openalpr:v1 .
 ```
