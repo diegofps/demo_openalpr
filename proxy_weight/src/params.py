@@ -12,4 +12,4 @@ SYNC               = os.getenv("SYNC", "WEIGHT")
 NUM_THREADS        = int(os.getenv("NUM_THREADS", "16"))
 REFRESH_SECONDS    = int(os.getenv("REFRESH_SECONDS", "3"))
 MIN_CPU_FOR_WEIGHT = float(os.getenv("MIN_CPU_FOR_WEIGHT", "0.9"))
-
+MOVING_AVERAGE_LEN = int(os.getenv("MOVING_AVERAGE_LEN", "3"))

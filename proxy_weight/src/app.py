@@ -1,24 +1,67 @@
 #!/usr/bin/python3
 
 from flask import jsonify, Flask, request, Response, jsonify
+from collections import defaultdict
 from utils import debug
 
 import jsonpickle
 import requests
 import random
+import params
 import sync
+import time
 
 
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 EXCLUDED_HEADERS = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
 
 
-app = Flask(__name__)
+class MovingAverage:
+
+    def __init__(self):
+        self.values = [1 for _ in range(params.MOVING_AVERAGE_LEN)]
+        self.p = 0
+    
+    def write(self, value):
+        self.values[self.p] = value
+        self.p += 1
+
+        if self.p == params.MOVING_AVERAGE_LEN:
+            self.p = 0
+    
+    def read(self):
+        return sum(self.values) / params.MOVING_AVERAGE_LEN
+
+
+avgs  = defaultdict(MovingAverage)
+app   = Flask(__name__)
 nodes = []
 
 
-def node_listener(new_nodes):
+def refresh_scores(nodes_list):
+    score_sum = 0.0
+    
+    for node in nodes_list:
+        score_sum += node.score_raw
+        node.score_sum = score_sum
+    
+    if score_sum == 0.0:
+        debug("Zeroed score_sum, changing to 1.0")
+        score_sum = 1.0
+    
+    for node in nodes_list:
+        node.score_sum /= score_sum
+        node.score = node.score_raw / score_sum
+
+
+def node_listener(new_nodes, busy=False):
+    if busy and params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
+        for n in new_nodes:
+            n.score_raw = avgs[n.ip].read()
+    
     global nodes
+
+    refresh_scores(new_nodes)
     nodes = new_nodes
 
 sync.start(node_listener)
@@ -52,24 +95,6 @@ def pick_node_and_pod():
     print("Chose node", node.name, node.ip, "and pod", pod.name, pod.ip)
     return node, pod
 
-'''
-@app.route('/proxy_data', methods=["POST"])
-def post_route():
-    debug("Updating list of nodes from client input")
-    data = jsonpickle.decode(request.data)
-    # debug("RECEIVED FROM CLIENT", data)
-    
-    global nodes
-    nodes = data
-    
-    body = jsonpickle.encode(data, unpicklable=False)
-    
-    return app.response_class(
-        response=body,
-        status=200,
-        mimetype='application/json'
-    )
-'''
 
 @app.route('/proxy_data', methods=["GET"])
 def get_route():
@@ -85,21 +110,12 @@ def get_route():
 @app.route('/forward', defaults={'path': ''}, methods=HTTP_METHODS)
 @app.route('/forward/<path:path>', methods=HTTP_METHODS)
 def proxy(path):
-
-    #print("path=", path)
-    #print("args=", str(request.args))
-    #print("url=", request.url)
-    #print("host_url=", request.host_url)
-    #print("url2=", request.url.replace(request.host_url, 'https://wespa.com.br/'))
     node, pod = pick_node_and_pod()
+    target    = 'http://' + pod.ip + ':4568/'
+    newurl    = request.url.replace(request.host_url + "forward/", target)
     
-    target = 'http://' + pod.ip + ':4568/'
-    #debug("Directing to ", target)
-    #hit_counter[node.ip] += 1
+    start_time = time.monotonic()
 
-    newurl = request.url.replace(request.host_url + "forward/", target)
-    print(newurl)
-    
     resp = requests.request(
         method=request.method,
         url=newurl,
@@ -113,7 +129,10 @@ def proxy(path):
 
     #body = resp.content
     body = resp.iter_content(chunk_size=10*1024)
-    
+
     response = Response(body, resp.status_code, headers)
+    
+    ellapsed_time = time.monotonic() - start_time
+    avgs[node.ip].write(ellapsed_time)
     
     return response

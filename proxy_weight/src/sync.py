@@ -48,23 +48,6 @@ def refresh_cpu_stats(p, nodes, onlyPrimary=False):
         node.busy = busy
 
 
-def refresh_scores(nodes_list):
-    score_sum = 0.0
-    
-    for node in nodes_list:
-        score_sum += node.score_raw
-        node.score_sum = score_sum
-    
-    if score_sum == 0.0:
-        debug("Zeroed score_sum, changing to 1.0")
-        score_sum = 1.0
-    
-    for node in nodes_list:
-        node.score_sum /= score_sum
-        node.score = node.score_raw / score_sum
-
-
-
 class BaseSync(Thread):
 
     def __init__(self):
@@ -113,9 +96,7 @@ class SyncWeight(BaseSync):
         for node in nodes:
             node.score_raw = node.weight
         
-        refresh_scores(nodes)
-
-        self.listener(nodes)
+        self.listener(nodes, busy=True)
 
         # Send nodes and weights for server
         #data = jsonpickle.encode(nodes)
@@ -159,6 +140,8 @@ class SyncWeightOnBusy(BaseSync):
             for node in nodes:
                 node.score_raw = node.weight
 
+            self.listener(nodes, busy=True)
+        
         else:
             print("CPU usage is low, using only primary nodes (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
             
@@ -167,10 +150,9 @@ class SyncWeightOnBusy(BaseSync):
                     node.score_raw = node.weight
                 else:
                     node.score_raw = 0.0
+            
+            self.listener(nodes, busy=False)
         
-        refresh_scores(nodes)
-
-        self.listener(nodes)
 
         # Send the nodes and their weights to our remote server
         #data = jsonpickle.encode(nodes)
@@ -198,7 +180,7 @@ elif params.SYNC == "WEIGHT_ON_BUSY":
     sync_process = SyncWeightOnBusy()
 
 elif params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
-    sync_process = SyncAdaptiveWeightOnBusy()
+    sync_process = SyncWeightOnBusy()
 
 else:
     debug("Unknown sync method (", params.SYNC, "), using default method: WEIGHT")
