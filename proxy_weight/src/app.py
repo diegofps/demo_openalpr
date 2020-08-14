@@ -56,8 +56,11 @@ def refresh_scores(nodes_list):
 
 def node_listener(new_nodes, busy=False):
     if busy and params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
+        tmp = []
         for n in new_nodes:
             n.score_raw = avgs[n.ip].read()
+            tmp.append(n.ip + ":" + str(n.score_raw))
+        print("Applying Adaptive Weight: ", " ".join(tmp))
     
     global nodes
 
@@ -69,7 +72,7 @@ sync.start(node_listener)
 
 def pick_node_and_pod():
     nodes_list = nodes
-    debug("Choosing between", len(nodes_list), "nodes")
+    #debug("Choosing between", len(nodes_list), "nodes")
     
     if not nodes_list:
         return None
