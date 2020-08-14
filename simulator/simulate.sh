@@ -5,7 +5,7 @@ PREFIX="output"
 STABILITY_TIME=30
 COLLECT_TIME=300
 #HOST="http://10.20.31.92:4570/forward"
-HOST="http://10.20.31.92:30199"
+HOST="http://10.20.31.92:31397"
 
 function start
 {
