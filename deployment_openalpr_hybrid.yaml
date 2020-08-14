@@ -26,7 +26,7 @@ spec:
                 - arm64
       containers:
       - name: demo-openalpr
-        image: 10.1.1.1:27443/demo_openalpr
-        imagePullPolicy: IfNotPresent
+        image: 10.1.1.1:27443/demo_openalpr:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 4568

@@ -2,3 +2,4 @@
 *.crt
 *.key
 **/id_rsa*
+**/.vscode

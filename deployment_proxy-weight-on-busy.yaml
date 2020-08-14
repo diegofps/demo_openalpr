@@ -14,7 +14,16 @@ spec:
       labels:
         app: openalpr-proxy-weight-on-busy
     spec:
-      nodeName: perl
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - perl
+                - host.local
       containers:
       - name: openalpr-proxy-weight-on-busy
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
