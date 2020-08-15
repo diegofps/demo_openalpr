@@ -62,7 +62,7 @@ def node_listener(new_nodes, busy=False):
         if params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
             tmp = []
             for n in new_nodes:
-                n.score_raw = avgs[n.ip].read()
+                n.score_raw = 1.0 / avgs[n.ip].read()
                 tmp.append(n.ip + ":" + str(n.score_raw))
             print("It is busy, applying Adaptive Weight: ", " ".join(tmp))
         else:
@@ -147,7 +147,7 @@ def proxy(path):
 
     avg = avgs[node.ip]
     avg.write(ellapsed_time)
-    node.score_raw = avg.read()
+    node.score_raw = 1.0 / avg.read()
     refresh_scores(nodes)
     
     return response
