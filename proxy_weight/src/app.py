@@ -20,9 +20,12 @@ class MovingAverage:
 
     def __init__(self):
         self.values = [1 for _ in range(params.MOVING_AVERAGE_LEN)]
+        self.current = sum(self.values)
         self.p = 0
     
     def write(self, value):
+        value = int(value * 1000)
+        self.current += value - self.values[self.p]
         self.values[self.p] = value
         self.p += 1
 
@@ -30,7 +33,7 @@ class MovingAverage:
             self.p = 0
     
     def read(self):
-        return sum(self.values) / params.MOVING_AVERAGE_LEN
+        return self.current / float(params.MOVING_AVERAGE_LEN)
 
 
 avgs  = defaultdict(MovingAverage)
@@ -55,12 +58,17 @@ def refresh_scores(nodes_list):
 
 
 def node_listener(new_nodes, busy=False):
-    if busy and params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
-        tmp = []
-        for n in new_nodes:
-            n.score_raw = avgs[n.ip].read()
-            tmp.append(n.ip + ":" + str(n.score_raw))
-        print("Applying Adaptive Weight: ", " ".join(tmp))
+    if busy:
+        if params.SYNC == "ADAPTIVE_WEIGHT_ON_BUSY":
+            tmp = []
+            for n in new_nodes:
+                n.score_raw = avgs[n.ip].read()
+                tmp.append(n.ip + ":" + str(n.score_raw))
+            print("It is busy, applying Adaptive Weight: ", " ".join(tmp))
+        else:
+            print("This is a WeightOnBusy mode and it is busy")
+    else:
+        print("This server is not busy")
     
     global nodes
 
@@ -136,6 +144,10 @@ def proxy(path):
     response = Response(body, resp.status_code, headers)
     
     ellapsed_time = time.monotonic() - start_time
-    avgs[node.ip].write(ellapsed_time)
+
+    avg = avgs[node.ip]
+    avg.write(ellapsed_time)
+    node.score_raw = avg.read()
+    refresh_scores(nodes)
     
     return response
