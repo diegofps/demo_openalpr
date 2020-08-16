@@ -1,3 +1,4 @@
+import params
 import sys
 
 
@@ -42,4 +43,23 @@ def read_bool(data):
         return True
     
     return False
+
+
+class MovingAverage:
+
+    def __init__(self):
+        self.values = [1 for _ in range(params.MOVING_AVERAGE_LEN)]
+        self.current = sum(self.values)
+        self.p = 0
     
+    def write(self, value):
+        value = int(value * 1000)
+        self.current += value - self.values[self.p]
+        self.values[self.p] = value
+        self.p += 1
+
+        if self.p == params.MOVING_AVERAGE_LEN:
+            self.p = 0
+    
+    def read(self):
+        return self.current / float(params.MOVING_AVERAGE_LEN)
