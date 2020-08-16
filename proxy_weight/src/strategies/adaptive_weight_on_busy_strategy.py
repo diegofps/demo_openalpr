@@ -4,6 +4,7 @@ from utils import MovingAverage
 
 import time
 
+
 def time_to_weight(v):
     return 1.0 / (v ** 2)
 

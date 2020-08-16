@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 1
+
 TE=`sudo kubectl get pods | grep Terminating | wc -l`
 
 while [ $TE != '0' ]

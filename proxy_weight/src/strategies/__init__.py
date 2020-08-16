@@ -8,21 +8,21 @@ import params
 
 
 def start():
-    if params.MODE == "RANDOM":
+    if params.STRATEGY == "RANDOM":
         return RandomStrategy()
     
-    elif params.MODE == "WEIGHT":
+    elif params.STRATEGY == "WEIGHT":
         return WeightStrategy()
     
-    elif params.MODE == "WEIGHT_ON_BUSY":
+    elif params.STRATEGY == "WEIGHT_ON_BUSY":
         return WeightOnBusyStrategy()
     
-    elif params.MODE == "ADAPTIVE_WEIGHT_ON_BUSY":
+    elif params.STRATEGY == "ADAPTIVE_WEIGHT_ON_BUSY":
         return AdaptiveWeightOnBusyStrategy()
     
-    elif params.MODE == "MIN":
+    elif params.STRATEGY == "MIN":
         return MinStrategy()
     
     else:
-        print("Unknown strategy mode:", params.MODE, ", using default strategy (RANDOM)")
+        print("Unknown strategy:", params.STRATEGY, ", using default strategy (RANDOM)")
         return RandomStrategy()

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 1
+
 CC=`sudo kubectl get pods | grep Pending | wc -l`
 PE=`sudo kubectl get pods | grep ContainerCreating | wc -l`
 EIP=`sudo kubectl get pods | grep ErrImagePull | wc -l`

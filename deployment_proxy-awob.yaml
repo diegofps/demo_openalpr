@@ -1,22 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-weight
+  name: openalpr-proxy-awob
   labels:
-    app: openalpr-proxy-weight
+    app: openalpr-proxy-awob
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: openalpr-proxy-weight
+      app: openalpr-proxy-awob
   template:
     metadata:
       labels:
-        app: openalpr-proxy-weight
+        app: openalpr-proxy-awob
     spec:
-      nodeName: perl
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - perl
+                - host.local
       containers:
-      - name: openalpr-proxy-weight
+      - name: openalpr-proxy-awob
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: IfNotPresent
         env:
@@ -32,7 +41,10 @@ spec:
           value: "https://10.1.1.1:6443"
         - name: SELF_SERVER
           value: "http://localhost:4570"
-        - name: SYNC
-          value: WEIGHT
+        - name: STRATEGY
+          value: ADAPTIVE_WEIGHT_ON_BUSY
+        - name: MIN_CPU_FOR_WEIGHT
+          value: "0.9"
         ports:
         - containerPort: 4570
+

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openalpr-proxy-w
+  labels:
+    app: openalpr-proxy-w
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: openalpr-proxy-w
+  template:
+    metadata:
+      labels:
+        app: openalpr-proxy-w
+    spec:
+      nodeName: perl
+      containers:
+      - name: openalpr-proxy-w
+        image: 10.1.1.1:27443/openalpr-proxy-weight:v1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: APP_NAME
+          value: "openalpr"
+        - name: SSH_USER
+          value: "ngd"
+        - name: NUM_THREADS
+          value: "16"
+        - name: REFRESH_SECONDS
+          value: "5"
+        - name: API_SERVER
+          value: "https://10.1.1.1:6443"
+        - name: SELF_SERVER
+          value: "http://localhost:4570"
+        - name: STRATEGY
+          value: MIN
+        ports:
+        - containerPort: 4570
