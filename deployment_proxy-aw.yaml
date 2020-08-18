@@ -43,6 +43,8 @@ spec:
           value: "http://localhost:4570"
         - name: STRATEGY
           value: ADAPTIVE_WEIGHT
+        - name: MOVING_AVERAGE_LEN
+          value: "1"
         ports:
         - containerPort: 4570
 

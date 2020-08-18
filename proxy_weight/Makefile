@@ -9,3 +9,6 @@ w: build
 
 m: build
 	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_m.sh)
+
+aw: build
+	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_aw.sh)
