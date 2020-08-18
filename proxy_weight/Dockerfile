@@ -23,6 +23,6 @@ COPY src .
 
 EXPOSE 4570
 
-#CMD ["flask", "run", "--host=0.0.0.0", "--port=4570"]
-CMD ["gunicorn", "-w=64", "--threads=1", "--bind=0.0.0.0:4570", "app:app"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=4570"]
+#CMD ["gunicorn", "-w=64", "--threads=1", "--bind=0.0.0.0:4570", "app:app"]
 
