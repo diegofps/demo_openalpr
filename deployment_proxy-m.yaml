@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-w
+  name: openalpr-proxy-m
   labels:
-    app: openalpr-proxy-w
+    app: openalpr-proxy-m
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: openalpr-proxy-w
+      app: openalpr-proxy-m
   template:
     metadata:
       labels:
-        app: openalpr-proxy-w
+        app: openalpr-proxy-m
     spec:
       nodeName: perl
       containers:
-      - name: openalpr-proxy-w
+      - name: openalpr-proxy-m
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: APP_NAME
           value: "openalpr"

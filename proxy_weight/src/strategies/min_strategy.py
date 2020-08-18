@@ -1,6 +1,6 @@
 from strategies.base_strategy import BaseStrategy, BaseSync
 from collections import defaultdict
-from utils import MovingAverage
+from utils import debug, MovingAverage
 
 import random
 import time
@@ -18,15 +18,43 @@ class MinStrategy(BaseStrategy):
     def pick_node_and_pod(self):
         nodes  = self.nodes
         weight = 0
-        idx    = -1
-        
-        for i, node in enumerate(nodes):
+        idx    = None
+        tmp    = []
+
+        for node in nodes:
             cur = self.avgs[node.ip].read()
-            if idx == -1 or cur < weight:
+            tmp.append(node.ip + ":" + str(cur))
+
+            if idx is None or cur < weight:
                 weight = cur
-                idx = i
-        
+                idx = node
+
+        opts = [x for x in nodes if self.avgs[x.ip].read() - weight < 100]
+
+        node = random.choice(opts)
         pod = random.choice(node.pods)
+        debug("MINS:", " ".join(tmp))
+        debug("CHOSE:", node.ip)
+        return node, pod
+
+    def pick_node_and_pod_1(self):
+        nodes  = self.nodes
+        weight = 0
+        idx    = None
+        tmp    = []
+        
+        for node in nodes:
+            cur = self.avgs[node.ip].read()
+            tmp.append(node.ip + ":" + str(cur))
+
+            if idx is None or cur < weight:
+                weight = cur
+                idx = node
+       
+        node = idx
+        pod = random.choice(node.pods)
+        debug("MINS:", " ".join(tmp))
+        debug("CHOSE:", node.ip)
         return node, pod
 
 
