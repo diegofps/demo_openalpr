@@ -7,7 +7,6 @@ import jsonpickle
 import requests
 import random
 import params
-import syncs
 import time
 
 

@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-wob
+  name: openalpr-proxy-r
   labels:
-    app: openalpr-proxy-wob
+    app: openalpr-proxy-r
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: openalpr-proxy-wob
+      app: openalpr-proxy-r
   template:
     metadata:
       labels:
-        app: openalpr-proxy-wob
+        app: openalpr-proxy-r
     spec:
       affinity:
         nodeAffinity:
@@ -25,7 +25,7 @@ spec:
                 - perl
                 - host.local
       containers:
-      - name: openalpr-proxy-wob
+      - name: openalpr-proxy-r
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: IfNotPresent
         env:
