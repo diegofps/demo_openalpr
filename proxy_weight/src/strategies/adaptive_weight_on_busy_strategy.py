@@ -6,7 +6,8 @@ import time
 
 
 def time_to_weight(v):
-    return 1.0 / (v ** 2)
+    #return 1.0 / (v ** 2)
+    return 1.0 / v
 
 
 class AdaptiveWeightOnBusyStrategy(WeightOnBusyStrategy):
