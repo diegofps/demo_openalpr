@@ -5,12 +5,6 @@ import random
 import params
 
 
-class WeightOnBusyStrategy(WeightStrategy):
-
-    def __init__(self):
-        super().__init__(SyncWeightOnBusy())
-
-
 class SyncWeightOnBusy(BaseSync):
     
     def __init__(self):
@@ -55,3 +49,9 @@ class SyncWeightOnBusy(BaseSync):
                     node.score_raw = 0.0
             
             self.listener.refresh_nodes(nodes, busy=False)
+
+
+class WeightOnBusyStrategy(WeightStrategy):
+
+    def __init__(self):
+        super().__init__(SyncWeightOnBusy())

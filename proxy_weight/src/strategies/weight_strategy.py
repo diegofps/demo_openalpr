@@ -3,6 +3,18 @@ from strategies.base_strategy import BaseStrategy, BaseSync
 import random
 
 
+class SyncWeight(BaseSync):
+    
+    def __init__(self):
+        super().__init__()
+    
+    def sync(self):
+        nodes = self.detect_nodes_and_pods()
+        for node in nodes:
+            node.score_raw = node.weight
+        self.listener.refresh_nodes(nodes, busy=True)
+
+
 class WeightStrategy(BaseStrategy):
 
     def __init__(self, sync=SyncWeight()):
@@ -38,14 +50,3 @@ class WeightStrategy(BaseStrategy):
         
         print("Chose node", node.name, node.ip, "and pod", pod.name, pod.ip)
         return node, pod
-
-class SyncWeight(BaseSync):
-    
-    def __init__(self):
-        super().__init__()
-    
-    def sync(self):
-        nodes = self.detect_nodes_and_pods()
-        for node in nodes:
-            node.score_raw = node.weight
-        self.listener.refresh_nodes(nodes, busy=True)

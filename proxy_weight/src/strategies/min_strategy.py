@@ -6,6 +6,16 @@ import random
 import time
 
 
+class SyncMin(BaseSync):
+
+    def __init__(self):
+        super().__init__()
+    
+    def sync(self):
+        nodes = self.detect_nodes_and_pods()
+        self.listener.refresh_nodes(nodes)
+
+
 class MinStrategy(BaseStrategy):
 
     def __init__(self):
@@ -69,13 +79,3 @@ class MinStrategy(BaseStrategy):
         avg.write(ellapsed_time)
         
         return response
-
-
-class SyncMin(BaseSync):
-
-    def __init__(self):
-        super().__init__()
-    
-    def sync(self):
-        nodes = self.detect_nodes_and_pods()
-        self.listener.refresh_nodes(nodes)
