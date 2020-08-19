@@ -1,15 +1,36 @@
 #!/bin/bash
 
+TARGET=$1
+
+if [ -z $TARGET ]
+then
+    TARGET="10.20.31.92"
+fi
+
 function run
 {
-    NAME=$1
-    ssh locust@10.20.31.92 "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_${NAME}.sh"
-    ./simulate.sh ${NAME}
+    CLUSTER=$1
+    PROXY=$2
+    
+    ssh locust@$TARGET "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_${PROXY}.sh"
+
+    if [ ${PROXY} == "default" ]
+    then
+        SVC_NAME=$(ssh locust@$TARGET "sudo kubectl get services | grep openalpr- | awk '{print \$1}'")
+        NODE_PORT=$(ssh locust@$TARGET "sudo kubectl get services/$SVC_NAME -o go-template='{{(index .spec.ports 0).nodePort}}'")
+        echo "default proxy, got svc=$SVC_NAME and port=$NODE_PORT"
+
+        ./simulate.sh "${CLUSTER}_${PROXY}" "http://$TARGET:$NODE_PORT"
+    else
+        echo "Not a default proxy"
+        ./simulate.sh "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward"
+    fi
 }
 
-run "hybrid_default"
-run "hybrid_w"
-run "hybrid_r"
-run "hybrid_wob"
-run "hybrid_awob"
-run "hybrid_m"
+run "hybrid" "default"
+run "hybrid" "w"
+run "hybrid" "r"
+run "hybrid" "wob"
+run "hybrid" "awob"
+run "hybrid" "m"
+
