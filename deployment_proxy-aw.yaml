@@ -27,7 +27,7 @@ spec:
       containers:
       - name: openalpr-proxy-aw
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: APP_NAME
           value: "openalpr"

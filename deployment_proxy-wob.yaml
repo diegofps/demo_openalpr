@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openalpr-proxy-wob
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: openalpr-proxy-wob
@@ -27,7 +27,7 @@ spec:
       containers:
       - name: openalpr-proxy-wob
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: APP_NAME
           value: "openalpr"
