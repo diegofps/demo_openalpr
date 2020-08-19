@@ -12,3 +12,6 @@ m: build
 
 aw: build
 	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_aw.sh)
+
+wob: build
+	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_wob.sh)
