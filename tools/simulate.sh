@@ -1,17 +1,30 @@
 #!/bin/bash
 
-OUTPUTFILE="$1"
+OUTPUTNAME="$1"
 PREFIX="output"
 LOCUST_SERVER="http://10.20.31.30:8089"
 STABILITY_TIME=30
 COLLECT_TIME=600
-HOST="http://10.20.31.92:4570/forward"
-#HOST="http://10.20.31.92:31397"
+HOST="$2"
 
-if [ -z $OUTPUTFILE ]
+if [ -z $OUTPUTNAME ]
 then
-    OUTPUTFILE="result.csv"
+    OUTPUTNAME="unnamed"
 fi
+
+if [ -z $HOST ]
+then
+    HOST="http://10.20.31.92:4570/forward"
+    #HOST="http://10.20.31.92:31397"
+fi
+
+if [ -z `which q` ]
+then
+    echo "Missing q program"
+    exit 1
+fi
+
+OUTPUTFILE="${OUTPUTNAME}.csv"
 
 function start
 {
@@ -21,14 +34,14 @@ function start
     sleep 5
 
     curl -d user_count=100 -d hatch_rate=30 -d host=$HOST ${LOCUST_SERVER}/swarm
-    rm -f $OUTPUTFILE
+    rm -f $OUTPUTFILE "tmp/${OUTPUTNAME}_*.csv"
     mkdir tmp
 }
 
 function measure
 {
     QTD=$1
-    FILENAME="tmp/${PREFIX}_${QTD}.csv"
+    FILENAME="tmp/${OUTPUTNAME}_${QTD}.csv"
 
     echo "Running experiment for ${QTD} users"
     curl -d user_count=$QTD -d hatch_rate=30 ${LOCUST_SERVER}/swarm
@@ -40,10 +53,6 @@ function measure
     wget ${LOCUST_SERVER}/stats/requests/csv -O ${FILENAME}
 
     q -H -d ',' "select $QTD as \"Users\",\"Request Count\",\"Failure Count\",\"Median Response Time\",\"Average Response Time\",0 as \"Var in Avg Response Time\",\"Min Response Time\",\"Max Response Time\",\"Average Content Size\",\"Requests/s\",0 as \"Var in Requests/s\",\"Failures/s\",\"50%\",\"66%\",\"75%\",\"80%\",\"90%\",\"95%\",\"98%\",\"99%\",\"99.9%\",\"99.99%\",\"99.999%\",\"100%\" from ${FILENAME} limit 1" >> $OUTPUTFILE
-}
-
-function terminate
-{
     killall locust
 }
 
