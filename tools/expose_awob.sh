@@ -1,7 +1,9 @@
 #!/bin/bash
 
-sudo kubectl delete service `sudo kubectl get services | awk '{if(NR>1) print $1}' | grep -v kubernetes`
+# Undeploy any previous proxy
+./undeploy_proxy.sh
 
+# Create and expose the proxy
 sudo kubectl apply -f ../deployment_proxy-awob.yaml
 sudo kubectl expose deployment/openalpr-proxy-awob --type="LoadBalancer" --port 4570
 

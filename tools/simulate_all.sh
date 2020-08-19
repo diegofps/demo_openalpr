@@ -1,20 +1,15 @@
 #!/bin/bash
 
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_default.sh'
-./simulate.sh result_default.csv
+function run
+{
+    NAME=$1
+    ssh locust@10.20.31.92 "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_${NAME}.sh"
+    ./simulate.sh ${NAME}
+}
 
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_w.sh'
-./simulate.sh hybrid_w.csv
-
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_r.sh'
-./simulate.sh hybrid_r.csv
-
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_wob.sh'
-./simulate.sh hybrid_wob.csv
-
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_awob.sh'
-./simulate.sh hybrid_awob.csv
-
-ssh locust@10.20.31.92 'cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_m.sh'
-./simulate.sh hybrid_m.csv
-
+run "hybrid_default"
+run "hybrid_w"
+run "hybrid_r"
+run "hybrid_wob"
+run "hybrid_awob"
+run "hybrid_m"
