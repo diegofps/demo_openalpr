@@ -28,6 +28,7 @@ function run
 }
 
 run "hybrid" "default"
+run "hybrid" "aw"
 run "hybrid" "w"
 run "hybrid" "r"
 run "hybrid" "wob"
