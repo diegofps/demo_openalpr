@@ -1,8 +1,11 @@
 from locust import HttpUser, task, between
 from glob import glob
 
+import resource
 import random
 import os
+
+resource.setrlimit(resource.RLIMIT_NOFILE, (999999, 999999))
 
 class OpenALPRUser(HttpUser):
     wait_time = between(5, 9)

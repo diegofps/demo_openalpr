@@ -4,8 +4,9 @@ OUTPUTNAME="$1"
 PREFIX="output"
 LOCUST_SERVER="http://10.20.31.30:8089"
 STABILITY_TIME=30
-COLLECT_TIME=600
+COLLECT_TIME=60
 HOST="$2"
+SERIE="$3"
 
 if [ -z $OUTPUTNAME ]
 then
@@ -14,8 +15,14 @@ fi
 
 if [ -z $HOST ]
 then
+    echo "HOST is empty, using default value"
     HOST="http://10.20.31.92:4570/forward"
     #HOST="http://10.20.31.92:31397"
+fi
+
+if [ -z $SERIE ]
+then
+    SERIE="1"
 fi
 
 if [ -z `which q` ]
@@ -53,15 +60,28 @@ function measure
     wget ${LOCUST_SERVER}/stats/requests/csv -O ${FILENAME}
 
     q -H -d ',' "select $QTD as \"Users\",\"Request Count\",\"Failure Count\",\"Median Response Time\",\"Average Response Time\",0 as \"Var in Avg Response Time\",\"Min Response Time\",\"Max Response Time\",\"Average Content Size\",\"Requests/s\",0 as \"Var in Requests/s\",\"Failures/s\",\"50%\",\"66%\",\"75%\",\"80%\",\"90%\",\"95%\",\"98%\",\"99%\",\"99.9%\",\"99.99%\",\"99.999%\",\"100%\" from ${FILENAME} limit 1" >> $OUTPUTFILE
+}
+
+function terminate
+{
     killall locust
 }
 
 start
 
-measure 300
-measure 600
-measure 900
-measure 1200
+if [ $SERIE == "1" ]
+then
+    measure 300
+    measure 600
+    measure 900
+    measure 1200
+
+elif [ $SERIE == "2" ]
+then
+    measure 100
+    measure 200
+    measure 300
+fi
 
 terminate
 
