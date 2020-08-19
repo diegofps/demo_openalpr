@@ -8,7 +8,7 @@ import params
 class WeightOnBusyStrategy(WeightStrategy):
 
     def __init__(self):
-        BaseStrategy.__init__(SyncWeightOnBusy())
+        super().__init__(SyncWeightOnBusy())
 
 
 class SyncWeightOnBusy(BaseSync):

@@ -5,8 +5,8 @@ import random
 
 class WeightStrategy(BaseStrategy):
 
-    def __init__(self):
-        super().__init__(SyncWeight())
+    def __init__(self, sync=SyncWeight()):
+        super().__init__(sync)
     
     def refresh_nodes(self, new_nodes, busy=False):
         self.refresh_scores(new_nodes)
