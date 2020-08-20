@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TARGET=$1
+REST_TIME=60
 
 if [ -z $TARGET ]
 then
@@ -25,6 +26,8 @@ function run
         echo "Not a default proxy"
         ./simulate.sh "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward"
     fi
+
+    sleep $REST_TIME
 }
 
 run "hybrid" "default"
