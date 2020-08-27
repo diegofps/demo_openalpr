@@ -1,6 +1,7 @@
 from flask import request, Response
 from threading import Thread
 from models import Node, Pod
+from utils import debug
 
 import clustertools
 import apiserver
@@ -42,7 +43,7 @@ class BaseSync(Thread):
                 break
             
             except:
-                print("Sync has failed")
+                debug("Sync has failed")
                 traceback.print_exc(file=sys.stdout)
     
     def sync(self):

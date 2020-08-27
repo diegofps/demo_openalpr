@@ -1,4 +1,5 @@
 from strategies.base_strategy import BaseStrategy, BaseSync
+from utils import debug
 
 import random
 
@@ -48,5 +49,5 @@ class WeightStrategy(BaseStrategy):
         if node.pod == len(node.pods):
             node.pod = 0
         
-        print("Chose node", node.name, node.ip, "and pod", pod.name, pod.ip)
+        debug("Chose node", node.name, node.ip, "and pod", pod.name, pod.ip)
         return node, pod

@@ -1,5 +1,6 @@
 from strategies.base_strategy import BaseStrategy, BaseSync
 from strategies.weight_strategy import WeightStrategy
+from utils import debug
 
 import random
 import params
@@ -24,7 +25,7 @@ class SyncWeightOnBusy(BaseSync):
                 numCpu += 1
         
         if numCpu == 0:
-            print("Warning: No primary node detected")
+            debug("Warning: No primary node detected")
             avgCpu = 1.0
             
         else:
@@ -32,7 +33,7 @@ class SyncWeightOnBusy(BaseSync):
         
         # Update the scores
         if avgCpu >= params.MIN_CPU_FOR_WEIGHT:
-            print("CPU usage is high, enabling CSDs (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
+            debug("CPU usage is high, enabling CSDs (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
 
             for node in nodes:
                 node.score_raw = node.weight
@@ -40,7 +41,7 @@ class SyncWeightOnBusy(BaseSync):
             self.listener.refresh_nodes(nodes, busy=True)
         
         else:
-            print("CPU usage is low, using only primary nodes (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
+            debug("CPU usage is low, using only primary nodes (CPU:", avgCpu, ", Nodes:", len(nodes), ")")
             
             for node in nodes:
                 if node.primary:
