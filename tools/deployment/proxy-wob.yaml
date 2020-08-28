@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-r
+  name: openalpr-proxy-wob
   labels:
-    app: openalpr-proxy-r
+    app: openalpr-proxy-wob
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: openalpr-proxy-r
+      app: openalpr-proxy-wob
   template:
     metadata:
       labels:
-        app: openalpr-proxy-r
+        app: openalpr-proxy-wob
     spec:
       affinity:
         nodeAffinity:
@@ -25,7 +25,7 @@ spec:
                 - perl
                 - host.local
       containers:
-      - name: openalpr-proxy-r
+      - name: openalpr-proxy-wob
         image: 10.1.1.1:27443/openalpr-proxy-weight:v1
         imagePullPolicy: Always
         env:
@@ -39,10 +39,10 @@ spec:
           value: "5"
         - name: API_SERVER
           value: "https://10.1.1.1:6443"
-        - name: SELF_SERVER
-          value: "http://localhost:4570"
         - name: STRATEGY
-          value: RANDOM
+          value: WEIGHT_ON_BUSY
+        - name: MIN_CPU_FOR_WEIGHT
+          value: "0.9"
         ports:
         - containerPort: 4570
 
