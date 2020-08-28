@@ -13,3 +13,5 @@ NUM_THREADS        = int(os.getenv("NUM_THREADS", "16"))
 REFRESH_SECONDS    = int(os.getenv("REFRESH_SECONDS", "3"))
 MIN_CPU_FOR_WEIGHT = float(os.getenv("MIN_CPU_FOR_WEIGHT", "0.9"))
 MOVING_AVERAGE_LEN = int(os.getenv("MOVING_AVERAGE_LEN", "1"))
+ON_BUSY            = os.getenv("ON_BUSY", "1") != "0"
+TIME_TO_WEIGHT     = os.getenv("TIME_TO_WEIGHT", "time_to_weight_3")

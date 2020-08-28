@@ -24,7 +24,7 @@ class AdaptiveWeightOnBusyStrategy(WeightOnBusyStrategy):
                 n.score_raw = time_to_weight(self.avgs[n.ip].read())
                 tmp.append(n.ip + ":" + str(n.score_raw))
                 
-            debug("Server is busy, applying Adaptive Weight: ", " ".join(tmp))
+            debug("Primary nodes are busy, applying Adaptive Weight: ", " ".join(tmp))
             
         else:
             debug("This server is not busy")
