@@ -1,4 +1,9 @@
-all: build
+all: certs awob
+
+certs:
+	mkdir -p ./keys
+	sudo cp /var/lib/rancher/k3s/server/tls/client-admin.crt /var/lib/rancher/k3s/server/tls/client-admin.key /var/lib/rancher/k3s/server/tls/server-ca.crt ~/.ssh/id_rsa ./keys/
+	sudo chown ${USER}:${USER} ./keys/*
 
 build:
 	docker build . -t openalpr-proxy-weight:v1
@@ -15,3 +20,7 @@ aw: build
 
 wob: build
 	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_wob.sh)
+
+awob: build
+	(cd /home/ngd/Sources/demo_openalpr/tools && ./expose_awob.sh)
+
