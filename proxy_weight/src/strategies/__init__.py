@@ -1,4 +1,3 @@
-from strategies.adaptive_weight_on_busy_strategy import AdaptiveWeightOnBusyStrategy
 from strategies.adaptive_weight_strategy import AdaptiveWeightStrategy
 from strategies.weight_on_busy_strategy import WeightOnBusyStrategy
 from strategies.weight_strategy import WeightStrategy
@@ -17,9 +16,6 @@ def start():
     
     elif params.STRATEGY == "WEIGHT_ON_BUSY":
         return WeightOnBusyStrategy()
-    
-    elif params.STRATEGY == "ADAPTIVE_WEIGHT_ON_BUSY":
-        return AdaptiveWeightOnBusyStrategy()
     
     elif params.STRATEGY == "ADAPTIVE_WEIGHT":
         return AdaptiveWeightStrategy()
