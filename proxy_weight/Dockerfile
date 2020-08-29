@@ -1,7 +1,8 @@
 FROM python:3.7-buster
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive
-RUN apt install -yq locales
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt update && apt install -yq locales
 
 ENV LANG="pt_BR.UTF-8"
 
