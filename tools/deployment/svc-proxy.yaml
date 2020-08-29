@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-proxy
+spec:
+  selector:
+    app: openalpr
+  ports:
+    - protocol: TCP
+      port: 4570
+      targetPort: 4570
+  type: LoadBalancer

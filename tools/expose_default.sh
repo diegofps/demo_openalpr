@@ -4,7 +4,6 @@
 ./undeploy_proxy.sh
 
 # Create and expose the proxy
-NAME=`sudo kubectl get deployments | grep -e 'openalpr-[a-z]*\s' | awk '{ print $1}'`
-sudo kubectl expose deployment/$NAME --type="LoadBalancer" --port 4568
+sudo kubectl apply -f deployment/svc-openalpr.yaml
 
 ./wait_run.sh

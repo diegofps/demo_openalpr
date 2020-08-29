@@ -5,6 +5,6 @@
 
 # Create and expose the proxy
 sudo kubectl apply -f ./deployment/proxy-awob.yaml
-sudo kubectl expose deployment/openalpr-proxy-awob --type="LoadBalancer" --port 4570
+sudo kubectl apply -f deployment/svc-proxy.yaml
 
 ./wait_run.sh
