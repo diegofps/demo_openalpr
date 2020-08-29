@@ -1,4 +1,11 @@
 #!/bin/bash
-CMD="./$1"
+
+if [ $1 == "ls" ]
+then
+    CMD = "$1"
+else
+    CMD="./$1"
+fi
+
 shift
 cd /home/ngd/Sources/demo_openalpr/tools && exec $CMD $*
