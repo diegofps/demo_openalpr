@@ -7,8 +7,8 @@ function summary
 
 sleep 1
 
-CC=`sudo kubectl get pods | grep Pending | wc -l`
-PE=`sudo kubectl get pods | grep ContainerCreating | wc -l`
+CC=`sudo kubectl get pods | grep ContainerCreating | wc -l`
+PE=`sudo kubectl get pods | grep Pending | wc -l`
 EIP=`sudo kubectl get pods | grep ErrImagePull | wc -l`
 IPBF=`sudo kubectl get pods | grep ImagePullBackOff | wc -l`
 CLBO=`sudo kubectl get pods | grep CrashLoopBackOff | wc -l`
@@ -21,8 +21,8 @@ while [ $CC != '0' -o $PE != '0' ]
 do
     sleep 1
 
-    CC=`sudo kubectl get pods | grep Pending | wc -l`
-    PE=`sudo kubectl get pods | grep ContainerCreating | wc -l`
+    CC=`sudo kubectl get pods | grep ContainerCreating | wc -l`
+    PE=`sudo kubectl get pods | grep Pending | wc -l`
     EIP=`sudo kubectl get pods | grep ErrImagePull | wc -l`
     IPBF=`sudo kubectl get pods | grep ImagePullBackOff | wc -l`
     CLBO=`sudo kubectl get pods | grep CrashLoopBackOff | wc -l`
