@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openalpr
 spec:
-  replicas: 100
+  replicas: 56
   selector:
     matchLabels:
       app: openalpr

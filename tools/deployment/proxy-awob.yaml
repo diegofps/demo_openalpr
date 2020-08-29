@@ -46,7 +46,7 @@ spec:
         - name: MOVING_AVERAGE_LEN
           value: "1"
         - name: MIN_CPU_FOR_WEIGHT
-          value: "0.95"
+          value: "0.9"
         - name: ON_BUSY
           value: "1"
         - name: TIME_TO_WEIGHT
