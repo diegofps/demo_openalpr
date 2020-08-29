@@ -1,0 +1,4 @@
+#!/bin/bash
+CMD="./$1"
+shift
+cd /home/ngd/Sources/demo_openalpr/tools && exec $CMD $*
