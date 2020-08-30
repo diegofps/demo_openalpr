@@ -7,6 +7,6 @@ spec:
     app: $APPNAME
   ports:
     - protocol: TCP
-      port: 4570
-      targetPort: 4570
+      port: $PORT
+      targetPort: $PORT
   type: LoadBalancer

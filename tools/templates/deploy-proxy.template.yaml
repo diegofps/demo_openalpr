@@ -26,7 +26,7 @@ spec:
                 - host.local
       containers:
       - name: $APPNAME-proxy-$MODE
-        image: 10.1.1.1:27443/demo-proxy:v1
+        image: ${REGISTRY}/demo-proxy:v1
         imagePullPolicy: Always
         env:
         - name: APP_NAME

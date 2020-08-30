@@ -23,7 +23,6 @@ function check_sintax
 function undeploy
 {
     ./undeploy_app
-    #echo "undeploy not implemented yet"
 }
 
 function do_deploy_app

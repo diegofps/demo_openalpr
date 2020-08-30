@@ -25,7 +25,7 @@ spec:
                 - $ARCH
       containers:
       - name: demo-$APPNAME
-        image: 10.1.1.1:27443/demo_$APPNAME:v1
+        image: ${REGISTRY}/demo_$APPNAME:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 4568
