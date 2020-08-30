@@ -2,7 +2,7 @@
 
 if [ $1 == "ls" ]
 then
-    CMD = "$1"
+    CMD="$1"
 else
     CMD="./$1"
 fi
