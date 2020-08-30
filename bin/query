@@ -1,0 +1,50 @@
+#!/bin/bash
+
+TARGET=""
+DEFAULT_PROXY=""
+
+
+for i in "$@"; do
+    case $i in
+        -t=*|--target=*)
+            TARGET=${i#*=}
+            shift
+            ;;
+        -d|--default_proxy)
+            DEFAULT_PROXY=YES
+            shift
+            ;;
+        *)
+            echo "Unknown option: $i"
+            ;;
+    esac
+done
+
+if [ -z "$TARGET" ]; then
+    echo "Sintax: $0 -t=<TARGET> {-d}?"
+    exit 1
+fi
+
+
+if [ $TARGET == "openalpr" ]; then
+    if [ -z $DEFAULT_PROXY ]; then
+        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg' localhost:4570/forward/recognize
+    else
+        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg' localhost:4568/recognize
+    fi
+
+elif [ $TARGET == "tesseract" ]; then
+    if [ -z $DEFAULT_PROXY ]; then
+        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png' localhost:4670/forward/recognize
+    else
+        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png' localhost:4668/recognize
+    fi
+
+elif [ $TARGET == "telemetry" ]; then
+    time curl localhost:4580
+
+else
+    echo "Unknown target: $TARGET"
+    exit 1
+    
+fi
