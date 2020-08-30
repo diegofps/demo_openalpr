@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $1 == "ls" ]
+then
+    CMD="$1"
+else
+    CMD="./$1"
+fi
+
+shift
+cd ~/Sources/demo_openalpr/bin && exec $CMD $*

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $APPNAME-$MODE
+  labels:
+    app: $APPNAME
+spec:
+  replicas: $REPLICAS
+  selector:
+    matchLabels:
+      app: $APPNAME
+  template:
+    metadata:
+      labels:
+        app: $APPNAME
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - $ARCH
+      containers:
+      - name: demo-$APPNAME
+        image: ${REGISTRY}/demo_$APPNAME:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4568

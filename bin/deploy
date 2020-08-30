@@ -1,0 +1,67 @@
+#!/bin/bash
+
+APPNAME=$1
+MODE=$2
+REGISTRY=$3
+
+DEPLOY_APP_TEMPLATE="./templates/deploy-app.template.yaml"
+DEPLOY_APP=".deploy-app.yaml"
+
+PERL_REPLICAS=64
+CSD_REPLICAS=56
+PERL_ARCH="amd64"
+CSD_ARCH="arm64"
+
+if [ -z $REGISTRY ]; then
+    REGISTRY="10.1.1.1:27443"
+fi
+
+
+function check_sintax
+{
+    if [ -z "$APPNAME" -o -z "$MODE" ]; then
+        echo "Sintax: $0 <APPNAME> <MODE> <REGISTRY=10.1.1.1:27443>"
+        exit 1
+    fi
+}
+
+function undeploy
+{
+    ./undeploy_app
+}
+
+function do_deploy_app
+{
+    export APPNAME
+    export MODE=$1
+    export REPLICAS=$2
+    export ARCH=$3
+    export REGISTRY
+    cat $DEPLOY_APP_TEMPLATE | envsubst > $DEPLOY_APP
+    sudo kubectl apply -f $DEPLOY_APP
+    sleep 1
+}
+
+function do_deploy
+{
+    if [ $MODE == "hybrid" ]; then
+        do_deploy_app "perl" $PERL_REPLICAS $PERL_ARCH
+        do_deploy_app "csd" $CSD_REPLICAS $CSD_ARCH
+
+    elif [ $MODE == "csd" ]; then
+        do_deploy_app "csd" $CSD_REPLICAS $CSD_ARCH
+    
+    elif [ $MODE == "perl" ]; then
+        do_deploy_app "perl" $PERL_REPLICAS $PERL_ARCH
+
+    else
+        echo "Invalid mode: $MODE"
+        exit 1
+    fi
+}
+
+
+check_sintax
+undeploy
+do_deploy
+./wait_run
