@@ -36,8 +36,6 @@ function do_deploy_app
     export REPLICAS=$2
     export ARCH=$3
     export REGISTRY
-    #cat $DEPLOY_APP_TEMPLATE | envsubst > $DEPLOY_APP
-    #sudo kubectl apply -f $DEPLOY_APP
 
     cat $DEPLOY_APP_TEMPLATE | envsubst | sudo kubectl apply -f -
 
