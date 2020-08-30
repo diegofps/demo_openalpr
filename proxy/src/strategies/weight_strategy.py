@@ -67,7 +67,7 @@ class WeightStrategy(BaseStrategy):
 
     def __init__(self, sync=None):
         if sync is None:
-            sync = SyncWeightOnBusy if params.ON_BUSY else SyncWeight
+            sync = SyncWeightOnBusy() if params.ON_BUSY else SyncWeight()
         super().__init__(sync)
     
     def refresh_nodes(self, new_nodes, busy=False):
