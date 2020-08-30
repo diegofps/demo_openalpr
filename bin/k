@@ -8,4 +8,4 @@ else
 fi
 
 shift
-cd ${USER}/Sources/demo_openalpr/tools && exec $CMD $*
+cd ~/Sources/demo_openalpr/bin && exec $CMD $*

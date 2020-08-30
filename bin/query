@@ -28,16 +28,16 @@ fi
 
 if [ $TARGET == "openalpr" ]; then
     if [ -z $DEFAULT_PROXY ]; then
-        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg' localhost:4570/forward/recognize
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg" localhost:4570/forward/recognize
     else
-        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg' localhost:4568/recognize
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg" localhost:4568/recognize
     fi
 
 elif [ $TARGET == "tesseract" ]; then
     if [ -z $DEFAULT_PROXY ]; then
-        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png' localhost:4670/forward/recognize
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png" localhost:4570/forward/recognize
     else
-        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png' localhost:4668/recognize
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png" localhost:4568/recognize
     fi
 
 elif [ $TARGET == "telemetry" ]; then
