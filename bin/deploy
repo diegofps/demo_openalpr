@@ -45,13 +45,16 @@ function do_deploy_app
 function do_deploy
 {
     if [ $MODE == "hybrid" ]; then
+        undeploy
         do_deploy_app "perl" $PERL_REPLICAS $PERL_ARCH
         do_deploy_app "csd" $CSD_REPLICAS $CSD_ARCH
 
     elif [ $MODE == "csd" ]; then
+        undeploy
         do_deploy_app "csd" $CSD_REPLICAS $CSD_ARCH
     
     elif [ $MODE == "perl" ]; then
+        undeploy
         do_deploy_app "perl" $PERL_REPLICAS $PERL_ARCH
 
     else
@@ -62,6 +65,5 @@ function do_deploy
 
 
 check_sintax
-undeploy
 do_deploy
 ./wait_run

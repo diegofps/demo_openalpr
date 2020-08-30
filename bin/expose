@@ -52,24 +52,31 @@ function expose_with_custom_lb
 function do_expose
 {
     if [ "$MODE" == "default" ]; then
+        unexpose
         expose_with_default_lb $APPNAME "4568"
     
     elif [ "$MODE" == "aw" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "ADAPTIVE_WEIGHT" 0
 
     elif [ "$MODE" == "awob" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "ADAPTIVE_WEIGHT" 1
 
     elif [ "$MODE" == "m" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "MIN" 0
 
     elif [ "$MODE" == "r" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "RANDOM" 0
 
     elif [ "$MODE" == "w" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "WEIGHT" 0
     
     elif [ "$MODE" == "wob" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "WEIGHT" 1
         
     else
@@ -79,6 +86,5 @@ function do_expose
 }
 
 check_sintax
-unexpose
 do_expose
 ./wait_run
