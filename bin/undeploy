@@ -1,0 +1,48 @@
+#!/bin/bash
+
+function undeploy_all
+{
+    # Delete all services and deployments
+    sudo kubectl delete service `sudo kubectl get services | awk '{if(NR>1) print $1}' | grep -v kubernetes`
+    sudo kubectl delete deployment `sudo kubectl get deployments | awk '{if(NR>1) print $1}'`
+
+    # Wait for all pods to terminate
+    ./wait end
+}
+
+function undeploy_app
+{
+    sudo kubectl delete deploy `sudo kubectl get deploy | awk '{if(NR>1) print $1}' | grep -v openalpr-proxy`
+    ./wait end
+}
+
+function undeploy_proxy
+{
+    sudo kubectl delete service `sudo kubectl get services | awk '{if(NR>1) print $1}' | grep -v kubernetes`
+    sudo kubectl delete deployment `sudo kubectl get deployment | awk '{if(NR>1) print $1}' | grep openalpr-proxy`
+    ./wait end
+}
+
+function sintax
+{
+    echo "Sintax: $0 <TARGET=all|proxy|app>"
+}
+
+TARGET=$1
+
+if [ -z "$TARGET" ]; then
+    sintax
+
+elif [ $TARGET == "all" ]; then
+    undeploy_all
+
+elif [ $TARGET == "proxy" ]; then
+    undeploy_proxy
+
+elif [ $TARGET == "app" ]; then
+    undeploy_app
+
+else
+    echo "Invalid option: $TARGET"
+
+fi

@@ -17,7 +17,7 @@ fi
 function check_sintax
 {
     if [ -z "$APPNAME" -o -z "$MODE" ]; then
-        echo "Sintax: $0 <APPNAME> <MODE> <REGISTRY=10.1.1.1:27443>"
+        echo "Sintax: $0 <APPNAME=openalpr|tesseract> <PROXY=default|aw|awob|m|r|w|wob> <REGISTRY=10.1.1.1:27443>"
         exit 1
     fi
 }
@@ -87,4 +87,4 @@ function do_expose
 
 check_sintax
 do_expose
-./wait_run
+./wait start

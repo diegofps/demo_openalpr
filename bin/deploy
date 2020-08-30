@@ -19,7 +19,7 @@ fi
 function check_sintax
 {
     if [ -z "$APPNAME" -o -z "$MODE" ]; then
-        echo "Sintax: $0 <APPNAME> <MODE> <REGISTRY=10.1.1.1:27443>"
+        echo "Sintax: $0 <APPNAME=openalpr|tesseract> <MODE=hybrid|csd|perl> <REGISTRY=10.1.1.1:27443>"
         exit 1
     fi
 }
@@ -60,7 +60,7 @@ function do_deploy
         do_deploy_app "perl" $PERL_REPLICAS $PERL_ARCH
 
     else
-        echo "Invalid mode: $MODE"
+        echo "Invalid option: $MODE"
         exit 1
     fi
 }
@@ -68,4 +68,4 @@ function do_deploy
 
 check_sintax
 do_deploy
-./wait_run
+./wait start
