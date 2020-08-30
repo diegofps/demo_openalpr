@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-proxy-r
+  name: $APPNAME-proxy-$MODE
   labels:
-    app: openalpr-proxy-r
+    app: $APPNAME-proxy-$MODE
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: openalpr-proxy-r
+      app: $APPNAME-proxy-$MODE
   template:
     metadata:
       labels:
-        app: openalpr-proxy-r
+        app: $APPNAME-proxy-$MODE
     spec:
       affinity:
         nodeAffinity:
@@ -25,12 +25,12 @@ spec:
                 - perl
                 - host.local
       containers:
-      - name: openalpr-proxy-r
-        image: 10.1.1.1:27443/openalpr-proxy-weight:v1
+      - name: $APPNAME-proxy-$MODE
+        image: 10.1.1.1:27443/demo-proxy:v1
         imagePullPolicy: Always
         env:
         - name: APP_NAME
-          value: "openalpr"
+          value: "$APPNAME"
         - name: SSH_USER
           value: "ngd"
         - name: NUM_THREADS
@@ -39,8 +39,18 @@ spec:
           value: "5"
         - name: API_SERVER
           value: "https://10.1.1.1:6443"
+        - name: SELF_SERVER
+          value: "http://localhost:4570"
         - name: STRATEGY
-          value: RANDOM
+          value: "$STRATEGY"
+        - name: MIN_CPU_FOR_WEIGHT
+          value: "0.9"
+        - name: MOVING_AVERAGE_LEN
+          value: "1"
+        - name: ON_BUSY
+          value: "$ONBUSY"
+        - name: TIME_TO_WEIGHT
+          value: "time_to_weight_3"
         ports:
         - containerPort: 4570
 

@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openalpr-csd
+  name: $APPNAME-csd
   labels:
-    app: openalpr
+    app: $APPNAME
 spec:
-  replicas: 56
+  replicas: $REPLICAS
   selector:
     matchLabels:
-      app: openalpr
+      app: $APPNAME
   template:
     metadata:
       labels:
-        app: openalpr
+        app: $APPNAME
     spec:
       affinity:
         nodeAffinity:
@@ -22,10 +22,10 @@ spec:
               - key: kubernetes.io/arch
                 operator: In
                 values:
-                - arm64
+                - $ARCH
       containers:
-      - name: demo-openalpr
-        image: 10.1.1.1:27443/demo_openalpr:v1
+      - name: demo-$APPNAME
+        image: 10.1.1.1:27443/demo_$APPNAME:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 4568

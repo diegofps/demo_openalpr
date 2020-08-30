@@ -1,5 +1,4 @@
-from strategies.weight_strategy import WeightStrategy, SyncWeight
-from strategies.weight_on_busy_strategy import SyncWeightOnBusy
+from strategies.weight_strategy import WeightStrategy
 from collections import defaultdict
 from utils import MovingAverage
 
@@ -23,7 +22,7 @@ def time_to_weight_4(n, v):
 class AdaptiveWeightStrategy(WeightStrategy):
 
     def __init__(self):
-        super().__init__(SyncWeightOnBusy() if params.ON_BUSY else SyncWeight())
+        super().__init__()
         self.time_to_weight = globals()[params.TIME_TO_WEIGHT]
         self.avgs = defaultdict(MovingAverage)
     
