@@ -12,13 +12,12 @@ class OpenALPRUser(HttpUser):
 
     @task
     def recognize(self):
-        r = self.client.post("/recognize", files={'imagefile': self.filedata})
+        self.client.post("/recognize", files={'imagefile': self.filedata})
         #print(r.status_code, r.text)
     
     def on_start(self):
-        self.filepaths = glob("./datasets/openalpr/*")
-        self.filepath = os.path.expanduser("~/Sources/demo_openalpr/datasets/openalpr/image_0001.jpg")
+        #self.filepaths = glob("./datasets/openalpr/*")
+        self.filepath = os.path.expanduser("~/Sources/demo_openalpr/datasets/tesseract/saude.png")
         
         with open(self.filepath, "rb") as fin:
             self.filedata = fin.read()
-
