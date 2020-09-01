@@ -90,9 +90,11 @@ int main(int argc, char* argv[])
     printf("%d faces detected.\n", (pResults ? *pResults : 0));
 	Mat result_image = image.clone();
 	//print the detection results
-	for(int i = 0; i < (pResults ? *pResults : 0); i++)
+
+    const int numFaces = (pResults ? *pResults : 0);
+	for(int i = 0; i != numFaces; ++i)
 	{
-        short * p = ((short*)(pResults+1))+142*i;
+        const int * const p = pResults + 1 + i * 15;
 		int confidence = p[0];
 		int x = p[1];
 		int y = p[2];

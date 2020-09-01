@@ -363,7 +363,7 @@ objectdetect_cnn(unsigned char * rgbImageData,
 
     TIME_START;
     faces.clear();
-    faces.reserve(facesInfo.width);
+    faces.resize(facesInfo.width);
     
     for (int i = 0; i != facesInfo.width; ++i)
     {
@@ -372,7 +372,7 @@ objectdetect_cnn(unsigned char * rgbImageData,
         float bbymin = facesInfo.getElement(i, 0, 2);
         float bbxmax = facesInfo.getElement(i, 0, 3);
         float bbymax = facesInfo.getElement(i, 0, 4);
-        FaceRect r;
+        FaceRect & r = faces[i];
         r.score = score;
         r.x = int(bbxmin * width + 0.5f);
         r.y = int(bbymin * height + 0.5f);
@@ -390,8 +390,6 @@ objectdetect_cnn(unsigned char * rgbImageData,
             r.lm[lmidx * 2] = int(facesInfo.getElement(i, 0, 5 + lmidx * 2) * width + 0.5f);
             r.lm[lmidx * 2 + 1] = int(facesInfo.getElement(i, 0, 5 + lmidx * 2 + 1) * height + 0.5f);
         }
-
-        faces.push_back(r);
     }
     TIME_END("copy result");
 }
@@ -419,25 +417,25 @@ facedetect_cnn(int * result_buffer,
     objectdetect_cnn(rgb_image_data, width, height, step, faces);
 
     int num_faces = (int)faces.size();
-    #printf("num_faces: %d\n", num_faces);
+    printf("num_faces: %d\n", num_faces);
     num_faces = MIN(num_faces, 256);
 
-    int * p = result_buffer - 1;
-    *(++p) = num_faces;
+    int * p = result_buffer;
+    *p = num_faces; ++p;
 
     for (int i = 0; i != num_faces; ++i)
     {
         //copy data
-        *(++p) = (int)(faces[i].score * faces[i].score * 100);
-        *(++p) = faces[i].x;
-        *(++p) = faces[i].y;
-        *(++p) = faces[i].w;
-        *(++p) = faces[i].h;
+        *p = (int)(faces[i].score * faces[i].score * 100); ++p;
+        *p = faces[i].x; ++p;
+        *p = faces[i].y; ++p;
+        *p = faces[i].w; ++p;
+        *p = faces[i].h; ++p;
         
         //copy landmarks
-        for (int lmidx = 0; lmidx != 10; ++lmidx)
-            *(++p) = faces[i].lm[lmidx];
+        for (int lmidx = 0; lmidx != 10; ++lmidx, ++p)
+            *p = faces[i].lm[lmidx];
     }
 
-    return p;
+    return (int*)result_buffer;
 }
