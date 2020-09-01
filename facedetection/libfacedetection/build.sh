@@ -31,7 +31,22 @@ if [ $OPTION == "lib" ]; then
     fi
 
 elif [ $OPTION == "demo" ]; then
-    clang++ ${LIBFLAGS} ${SRCS} detect-image.cpp -o ${DEMONAME} -mavx2 -mfma -D_ENABLE_AVX2
+
+    ARCH=`uname -m`
+
+    if [ $ARCH == "x86_64" ]; then
+        echo "Building for amd64"
+        clang++ ${LIBFLAGS} ${SRCS} detect-image.cpp -o ${DEMONAME} -mavx2 -mfma -D_ENABLE_AVX2 
+
+    elif [ $ARCH == "aarch64" ]; then
+        echo "Building for arm64"
+        clang++ ${LIBFLAGS} ${SRCS} detect-image.cpp -o ${DEMONAME} -D_ENABLE_NEON
+
+    else
+        echo "Unknown arch: ${ARCH}"
+        exit 1
+
+    fi
 
 elif [ $OPTION == "deploy" ]; then
     mkdir -p /project
