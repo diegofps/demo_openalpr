@@ -20,6 +20,7 @@ for i in "$@"; do
     esac
 done
 
+
 if [ -z "$TARGET" ]; then
     echo "Sintax: $0 -t=<TARGET> {-d}?"
     exit 1
@@ -38,6 +39,13 @@ elif [ $TARGET == "tesseract" ]; then
         time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png" localhost:4570/forward/recognize
     else
         time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/tesseract/saude.png" localhost:4568/recognize
+    fi
+
+elif [ $TARGET == "facedetection" ]; then
+    if [ -z $DEFAULT_PROXY ]; then
+        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg' localhost:4570/forward/recognize
+    else
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg" localhost:4568/recognize
     fi
 
 elif [ $TARGET == "telemetry" ]; then
