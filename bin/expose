@@ -5,9 +5,7 @@ MODE=$2
 REGISTRY=$3
 
 DEPLOY_PROXY_TEMPLATE="./templates/deploy-proxy.template.yaml"
-DEPLOY_PROXY=".deploy-proxy.yaml"
 DEPLOY_SVC_TEMPLATE="./templates/svc.template.yaml"
-DEPLOY_SVC=".svc.yaml"
 
 if [ -z $REGISTRY ]; then
     REGISTRY="10.1.1.1:27443"
@@ -17,22 +15,21 @@ fi
 function check_sintax
 {
     if [ -z "$APPNAME" -o -z "$MODE" ]; then
-        echo "Sintax: $0 <APPNAME> <MODE> <REGISTRY=10.1.1.1:27443>"
+        echo "Sintax: $0 <APPNAME=openalpr|tesseract> <PROXY=default|aw|awob|m|r|w|wob> <REGISTRY=10.1.1.1:27443>"
         exit 1
     fi
 }
 
 function unexpose
 {
-    ./undeploy_proxy
+    ./undeploy proxy
 }
 
 function expose_with_default_lb
 {
     export APPNAME=$1
     export PORT=$2
-    cat $DEPLOY_SVC_TEMPLATE | envsubst > $DEPLOY_SVC
-    sudo kubectl apply -f $DEPLOY_SVC
+    cat $DEPLOY_SVC_TEMPLATE | envsubst | sudo kubectl apply -f -
 }
 
 function expose_with_custom_lb
@@ -42,8 +39,7 @@ function expose_with_custom_lb
     export MODE=$2
     export STRATEGY=$3
     export ONBUSY=$4
-    cat $DEPLOY_PROXY_TEMPLATE | envsubst > $DEPLOY_PROXY
-    sudo kubectl apply -f $DEPLOY_PROXY
+    cat $DEPLOY_PROXY_TEMPLATE | envsubst | sudo kubectl apply -f -
 
     # Expose the proxy
     expose_with_default_lb "$APPNAME-proxy-$MODE" "4570"
@@ -52,26 +48,33 @@ function expose_with_custom_lb
 function do_expose
 {
     if [ "$MODE" == "default" ]; then
+        unexpose
         expose_with_default_lb $APPNAME "4568"
     
     elif [ "$MODE" == "aw" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "ADAPTIVE_WEIGHT" 0
 
     elif [ "$MODE" == "awob" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "ADAPTIVE_WEIGHT" 1
 
     elif [ "$MODE" == "m" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "MIN" 0
 
     elif [ "$MODE" == "r" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "RANDOM" 0
 
     elif [ "$MODE" == "w" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "WEIGHT" 0
-    
+
     elif [ "$MODE" == "wob" ]; then
+        unexpose
         expose_with_custom_lb $APPNAME $MODE "WEIGHT" 1
-        
+
     else
         echo "Unknown mode: $MODE"
         exit 1
@@ -79,6 +82,5 @@ function do_expose
 }
 
 check_sintax
-unexpose
 do_expose
-./wait_run
+./wait start

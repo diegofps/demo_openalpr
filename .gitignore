@@ -5,3 +5,5 @@
 **/.vscode
 **/*.csv
 .*.yaml
+facedetection/libfacedetection/demo
+*.so
