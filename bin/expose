@@ -22,7 +22,7 @@ function check_sintax
 
 function unexpose
 {
-    ./undeploy_proxy
+    ./undeploy proxy
 }
 
 function expose_with_default_lb

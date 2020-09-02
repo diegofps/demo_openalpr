@@ -19,14 +19,14 @@ fi
 function check_sintax
 {
     if [ -z "$APPNAME" -o -z "$MODE" ]; then
-        echo "Sintax: $0 <APPNAME=openalpr|tesseract> <MODE=hybrid|csd|perl> <REGISTRY=10.1.1.1:27443>"
+        echo "Sintax: $0 <APPNAME=openalpr|tesseract|tesseract2|facedetection> <MODE=hybrid|csd|perl> <REGISTRY=10.1.1.1:27443>"
         exit 1
     fi
 }
 
 function undeploy
 {
-    ./undeploy_app
+    ./undeploy app
 }
 
 function do_deploy_app

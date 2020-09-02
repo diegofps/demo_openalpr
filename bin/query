@@ -43,7 +43,7 @@ elif [ $TARGET == "tesseract" ]; then
 
 elif [ $TARGET == "facedetection" ]; then
     if [ -z $DEFAULT_PROXY ]; then
-        time curl -F 'imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg' localhost:4570/forward/recognize
+        time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg" localhost:4570/forward/recognize
     else
         time curl -F "imagefile=@/home/${USER}/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg" localhost:4568/recognize
     fi
