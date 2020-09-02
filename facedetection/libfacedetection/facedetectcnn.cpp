@@ -485,7 +485,7 @@ bool maxpooling2x2S2(const CDataBlob<unsigned char> *inputData, CDataBlob<unsign
         return false;
     }
 
-    int lineElementStep = inputData->width * inputData->channelStep;
+    //int lineElementStep = inputData->width * inputData->channelStep;
 
     outputData->create(outputW, outputH, outputC);
     outputData->scale = inputData->scale;

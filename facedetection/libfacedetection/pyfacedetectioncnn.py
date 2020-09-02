@@ -31,13 +31,13 @@ class FaceDetectionCNN:
 
         for _ in range(eltos):
             face = {
-                "confidence": self.buffer[p+0],
-                "rect": (self.buffer[p+1], self.buffer[p+2], self.buffer[p+3], self.buffer[p+4]),
-                "p1": (self.buffer[p+5], self.buffer[p+6]),
-                "p2": (self.buffer[p+7], self.buffer[p+8]),
-                "p3": (self.buffer[p+9], self.buffer[p+10]),
-                "p4": (self.buffer[p+11], self.buffer[p+12]),
-                "p5": (self.buffer[p+13], self.buffer[p+14])
+                "confidence": int(self.buffer[p+0]),
+                "rect": (int(self.buffer[p+1]), int(self.buffer[p+2]), int(self.buffer[p+3]), int(self.buffer[p+4])),
+                "p1": (int(self.buffer[p+5]), int(self.buffer[p+6])),
+                "p2": (int(self.buffer[p+7]), int(self.buffer[p+8])),
+                "p3": (int(self.buffer[p+9]), int(self.buffer[p+10])),
+                "p4": (int(self.buffer[p+11]), int(self.buffer[p+12])),
+                "p5": (int(self.buffer[p+13]), int(self.buffer[p+14]))
             }
             
             result.append(face)

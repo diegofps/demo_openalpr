@@ -1,4 +1,4 @@
-FROM python:3.7-buster
+FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV LANGUAGE="pt_BR.UTF-8"
@@ -7,12 +7,13 @@ ENV LANG="pt_BR.UTF-8"
 
 RUN apt update && apt install -yq locales
 RUN locale-gen pt_BR.UTF-8 && localedef -i pt_BR -f UTF-8 pt_BR.UTF-8 && dpkg-reconfigure locales
-RUN apt install -yq libopencv-dev python3-opencv
+RUN apt install -yq libopencv-dev python3-opencv python3 python3-dev clang python3-pip
 RUN pip3 install flask gunicorn
 
 WORKDIR /libfacedetection
 COPY libfacedetection .
 RUN ./build.sh lib && ./build.sh deploy
+ENV PYTHONPATH="/libfacedetection"
 
 WORKDIR /project
 COPY src .

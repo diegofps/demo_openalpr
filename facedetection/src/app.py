@@ -3,7 +3,6 @@ from flask import jsonify, Flask, request
 
 import numpy as np
 
-import pytesseract
 import traceback
 import sys
 import cv2
