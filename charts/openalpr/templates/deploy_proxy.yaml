@@ -40,11 +40,11 @@ spec:
         - name: REFRESH_SECONDS
           value: "5"
         - name: API_SERVER
-          value: {{ .Values.apiserver | quote }}
+          value: {{ .Values.proxy.apiserver | quote }}
         - name: SELF_SERVER
           value: "http://localhost:4570"
         - name: STRATEGY
-          value: {{ .Values.strategy | quote }}
+          value: {{ .Values.proxy.strategy | quote }}
         - name: MIN_CPU_FOR_WEIGHT
           value: "0.9"
         - name: MOVING_AVERAGE_LEN
