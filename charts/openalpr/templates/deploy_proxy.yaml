@@ -1,5 +1,5 @@
 {{- $appname := include "openalpr.fullname" . -}}
-{{- $proxyname := $appname + "-proxy" -}}
+{{- $proxyname := printf "%s-proxy" $appname -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

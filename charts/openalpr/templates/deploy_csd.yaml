@@ -1,5 +1,5 @@
 {{- $appname := include "openalpr.fullname" . -}}
-{{- $deployname := $appname + "-app-csd" -}}
+{{- $deployname := printf "%s-app-csd" $appname -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -1,5 +1,5 @@
 {{- $appname := include "openalpr.fullname" . -}}
-{{- $deployname := $appname + "-app-host" -}}
+{{- $deployname := printf "%s-app-host" $appname -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
