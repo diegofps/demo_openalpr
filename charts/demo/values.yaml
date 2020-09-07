@@ -5,6 +5,7 @@
 registry: 10.1.1.1:27443
 
 app:
+  name: openalpr
   csd_pods: 56
   host_pods: 64
   port: 4568

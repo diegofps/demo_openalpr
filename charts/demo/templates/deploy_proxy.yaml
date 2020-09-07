@@ -1,5 +1,6 @@
 {{- $appname := include "openalpr.fullname" . -}}
 {{- $proxyname := printf "%s-proxy" $appname -}}
+{{- $labelname := printf "%s-%s" $fullname .Values.app.name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,7 +33,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: APP_NAME
-          value: {{ $appname | quote }}
+          value: {{ $labelname | quote }}
         - name: SSH_USER
           value: "ngd"
         - name: NUM_THREADS
