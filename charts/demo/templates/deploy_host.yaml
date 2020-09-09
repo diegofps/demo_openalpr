@@ -8,7 +8,7 @@ metadata:
   labels:
     app: {{ $labelname }}
 spec:
-  replicas: {{ .Values.app.csd_pods }}
+  replicas: {{ .Values.app.host_pods }}
   selector:
     matchLabels:
       app: {{ $labelname }}
