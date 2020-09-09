@@ -1,12 +1,17 @@
 #!/bin/bash
 
-OUTPUTNAME="$1"
+LOCUSTFILE="$1"
+OUTPUTNAME="$2"
 PREFIX="output"
 LOCUST_SERVER="http://10.20.31.30:8089"
 STABILITY_TIME=60
 COLLECT_TIME=600
-HOST="$2"
-SERIE="$3"
+HOST="$3"
+SERIE="$4"
+
+if [ -z $LOCUSTFILE ]; then
+    LOCUSTFILE="./locust/openalpr.py"
+fi
 
 if [ -z $OUTPUTNAME ]
 then
