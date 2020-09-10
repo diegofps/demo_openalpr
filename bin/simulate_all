@@ -1,11 +1,12 @@
 #!/bin/bash
 
 TARGET=$1
-REST_TIME=60
+APPNAME=$2
+REST_TIME=10
 
-if [ -z $TARGET ]
-then
-    TARGET="10.20.31.92"
+if [ -z $APPNAME ]; then
+    echo "Sintax: $0 <TARGET=10.20.31.92> <APPNAME=openalpr|facedetection|tesseract>"
+    exit 1
 fi
 
 function run
@@ -13,7 +14,7 @@ function run
     CLUSTER=$1
     PROXY=$2
     
-    ssh locust@$TARGET "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose_${PROXY}.sh"
+    ssh locust@$TARGET "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose ${PROXY}"
 
     if [ ${PROXY} == "default" ]
     then
@@ -21,10 +22,10 @@ function run
         NODE_PORT=$(ssh locust@$TARGET "sudo kubectl get services/$SVC_NAME -o go-template='{{(index .spec.ports 0).nodePort}}'")
         echo "default proxy, got svc=$SVC_NAME and port=$NODE_PORT"
 
-        ./simulate.sh "${CLUSTER}_${PROXY}" "http://$TARGET:$NODE_PORT"
+        ./simulate "./locust/${APPNAME}.sh" "${CLUSTER}_${PROXY}" "http://$TARGET:$NODE_PORT"
     else
         echo "Not a default proxy"
-        ./simulate.sh "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward"
+        ./simulate "./locust/${APPNAME}.sh" "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward"
     fi
 
     sleep $REST_TIME

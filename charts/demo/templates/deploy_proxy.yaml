@@ -1,0 +1,58 @@
+{{- $fullname := include "openalpr.fullname" . -}}
+{{- $proxyname := printf "%s-proxy" $fullname -}}
+{{- $labelname := printf "%s-%s" $fullname .Values.app.name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $proxyname }}
+  labels:
+    app: {{ $proxyname }}
+spec:
+  replicas: {{ .Values.proxy.pods }}
+  selector:
+    matchLabels:
+      app: {{ $proxyname }}
+  template:
+    metadata:
+      labels:
+        app: {{ $proxyname }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - perl
+                - host.local
+      containers:
+      - name: {{ $proxyname }}
+        image: {{ .Values.registry }}/demo-proxy:v1
+        imagePullPolicy: Always
+        env:
+        - name: APP_NAME
+          value: {{ $labelname | quote }}
+        - name: SSH_USER
+          value: "ngd"
+        - name: NUM_THREADS
+          value: "16"
+        - name: REFRESH_SECONDS
+          value: "5"
+        - name: API_SERVER
+          value: {{ .Values.proxy.apiserver | quote }}
+        - name: SELF_SERVER
+          value: "http://localhost:4570"
+        - name: STRATEGY
+          value: {{ .Values.proxy.strategy | quote }}
+        - name: MIN_CPU_FOR_WEIGHT
+          value: "0.9"
+        - name: MOVING_AVERAGE_LEN
+          value: "1"
+        - name: ON_BUSY
+          value: "1"
+        - name: TIME_TO_WEIGHT
+          value: "time_to_weight_3"
+        ports:
+        - containerPort: {{ .Values.proxy.port }}

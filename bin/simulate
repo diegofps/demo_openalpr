@@ -1,28 +1,17 @@
 #!/bin/bash
 
-OUTPUTNAME="$1"
+LOCUSTFILE="$1"
+OUTPUTNAME="$2"
 PREFIX="output"
 LOCUST_SERVER="http://10.20.31.30:8089"
 STABILITY_TIME=30
-COLLECT_TIME=60
-HOST="$2"
-SERIE="$3"
+COLLECT_TIME=20
+HOST="$3"
+SERIE="$4"
 
-if [ -z $OUTPUTNAME ]
-then
-    OUTPUTNAME="unnamed"
-fi
-
-if [ -z $HOST ]
-then
-    echo "HOST is empty, using default value"
-    HOST="http://10.20.31.92:4570/forward"
-    #HOST="http://10.20.31.92:31397"
-fi
-
-if [ -z $SERIE ]
-then
-    SERIE="1"
+if [ -z $SERIE ]; then
+    echo "Sintax: $0 <LOCUSTFILE=./locust/openalpr.py> <OUTPUTNAME=unnamed> <HOST=http://10.20.31.92:4570/forward> <SERIE=1|2>"
+    exit 1
 fi
 
 if [ -z `which q` ]
@@ -37,7 +26,7 @@ function start
 {
     echo "Starting server"
     killall locust
-    locust -f locustfile.py &
+    locust -f $LOCUSTFILE &
     sleep 5
 
     curl -d user_count=100 -d hatch_rate=30 -d host=$HOST ${LOCUST_SERVER}/swarm

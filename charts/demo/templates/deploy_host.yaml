@@ -1,0 +1,34 @@
+{{- $fullname := include "openalpr.fullname" . -}}
+{{- $deployname := printf "%s-app-host" $fullname -}}
+{{- $labelname := printf "%s-%s" $fullname .Values.app.name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $deployname }}
+  labels:
+    app: {{ $labelname }}
+spec:
+  replicas: {{ .Values.app.csd_pods }}
+  selector:
+    matchLabels:
+      app: {{ $labelname }}
+  template:
+    metadata:
+      labels:
+        app: {{ $labelname }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      containers:
+      - name: demo-{{ .Values.app.name }}
+        image: {{ .Values.registry }}/demo_{{ .Values.app.name }}:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.app.port }}
