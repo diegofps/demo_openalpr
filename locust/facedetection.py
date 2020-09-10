@@ -17,7 +17,7 @@ class OpenALPRUser(HttpUser):
     
     def on_start(self):
         #self.filepaths = glob("./datasets/openalpr/*")
-        self.filepath = os.path.expanduser("~/Sources/demo_openalpr/datasets/face/hss-2019_small.jpg")
+        self.filepath = os.path.expanduser("~/Sources/demo_openalpr/datasets/face/9c82c7a0-0963-4b57-a4a8-bc4a9cf5d0b0-large16x9_GettyImages1134307248.jpg")
         
         with open(self.filepath, "rb") as fin:
             self.filedata = fin.read()
