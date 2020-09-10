@@ -2,7 +2,7 @@
 
 TARGET=$1
 APPNAME=$2
-REST_TIME=10
+REST_TIME=60
 
 if [ -z $APPNAME ]; then
     echo "Sintax: $0 <TARGET=10.20.31.92> <APPNAME=openalpr|facedetection|tesseract>"
