@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  demo:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-10T06:38:06.121940297-07:00"
+    description: A Helm chart for Kubernetes
+    digest: 76002063dadca7f241f86f74eb82fcde33bedc1ad763be3a392478ee010fabfa
+    name: demo
+    type: application
+    urls:
+    - https://diegofps.github.io/demo_openalpr/charts/demo-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-09-10T06:38:06.121441308-07:00"
