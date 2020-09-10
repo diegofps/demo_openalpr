@@ -14,18 +14,18 @@ function run
     CLUSTER=$1
     PROXY=$2
     
-    ssh locust@$TARGET "cd /home/ngd/Sources/demo_openalpr/tools && sudo ./expose ${PROXY}"
+    ssh locust@$TARGET "cd /home/ngd/Sources/demo_openalpr/bin && sudo ./expose ${APPNAME} ${PROXY} 10.1.1.1:27443"
 
     if [ ${PROXY} == "default" ]
     then
-        SVC_NAME=$(ssh locust@$TARGET "sudo kubectl get services | grep openalpr- | awk '{print \$1}'")
+        SVC_NAME="svc-${APPNAME}"
         NODE_PORT=$(ssh locust@$TARGET "sudo kubectl get services/$SVC_NAME -o go-template='{{(index .spec.ports 0).nodePort}}'")
         echo "default proxy, got svc=$SVC_NAME and port=$NODE_PORT"
 
-        ./simulate "./locust/${APPNAME}.sh" "${CLUSTER}_${PROXY}" "http://$TARGET:$NODE_PORT"
+        ./simulate "../locust/${APPNAME}.py" "${CLUSTER}_${PROXY}" "http://$TARGET:$NODE_PORT" 1
     else
         echo "Not a default proxy"
-        ./simulate "./locust/${APPNAME}.sh" "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward"
+        ./simulate "../locust/${APPNAME}.py" "${CLUSTER}_${PROXY}" "http://$TARGET:4570/forward" 1
     fi
 
     sleep $REST_TIME
