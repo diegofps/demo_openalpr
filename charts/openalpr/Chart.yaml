@@ -1,6 +1,6 @@
 apiVersion: v2
-name: demo
-description: A Helm chart for Kubernetes
+name: openalpr
+description: License plate recognition for heterogeneous clusters (amd64 and arm64)
 
 # A chart can be either an 'application' or a 'library' chart.
 #

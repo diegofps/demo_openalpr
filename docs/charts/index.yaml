@@ -1,14 +1,25 @@
 apiVersion: v1
 entries:
-  demo:
+  facedetection:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2020-09-10T06:38:06.121940297-07:00"
-    description: A Helm chart for Kubernetes
-    digest: 76002063dadca7f241f86f74eb82fcde33bedc1ad763be3a392478ee010fabfa
-    name: demo
+    created: "2020-09-10T12:08:12.94258543-03:00"
+    description: Face detection for heterogeneous clusters (amd64 and arm64)
+    digest: b2823358da1a0fc9153fade39a06edabe180dda800bf38c6e222545fa14fbba8
+    name: facedetection
     type: application
     urls:
-    - https://diegofps.github.io/demo_openalpr/charts/demo-0.1.0.tgz
+    - https://diegofps.github.io/demo_openalpr/charts/facedetection-0.1.0.tgz
     version: 0.1.0
-generated: "2020-09-10T06:38:06.121441308-07:00"
+  openalpr:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-09-10T12:08:12.944644576-03:00"
+    description: License plate recognition for heterogeneous clusters (amd64 and arm64)
+    digest: 51679e2cae3d51d2f6bc5380e1d988cb4d9e72ead362dea10d071a0ff11ee840
+    name: openalpr
+    type: application
+    urls:
+    - https://diegofps.github.io/demo_openalpr/charts/openalpr-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-09-10T12:08:12.942138698-03:00"
