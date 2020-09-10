@@ -1,0 +1,17 @@
+# Default values for openalpr.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+registry: 10.1.1.1:27443
+
+app:
+  name: facedetection
+  csd_pods: 56
+  host_pods: 64
+  port: 4568
+
+proxy:
+  pods: 1
+  apiserver: https://10.1.1.1:6443
+  strategy: ADAPTIVE_WEIGHT
+  port: 4570
