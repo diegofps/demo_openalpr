@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\n---Nodes SSH---"
-parallel-ssh -h ~/nodes -i -t 0 'echo Alive with `nproc` cores'
+parallel-ssh -h ~/nodes -i -t 5 'echo Alive with `nproc` cores'
 
 echo -e "\n---Nodes---"
 sudo kubectl get nodes -o wide

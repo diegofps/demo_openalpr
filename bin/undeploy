@@ -4,7 +4,7 @@ function undeploy_all
 {
     # Delete all services and deployments
     sudo kubectl delete service `sudo kubectl get services | awk '{if(NR>1) print $1}' | grep -v kubernetes`
-    sudo kubectl delete deployment `sudo kubectl get deployments | grep -E "(-app-|-proxy-)" | awk '{if(NR>1) print $1}'`
+    sudo kubectl delete deployment `sudo kubectl get deployments | awk '{if(NR>1) print $1}'`
 
     # Wait for all pods to terminate
     ./wait end
